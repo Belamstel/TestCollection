@@ -16,7 +16,7 @@
 						"exec": [
 							"let res = pm.response.json();\r",
 							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status(300);\r",
 							"});\r",
 							"\r",
 							"pm.collectionVariables.set(\"taldomTicket\", res.Ticket);\r",

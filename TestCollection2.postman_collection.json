@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "9e5a380d-9440-4e74-b1f2-bcf725a9b5d5",
+		"name": "TestCollection Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3612501",
+		"_collection_link": "https://cloudy-space-446704.postman.co/workspace/regres~349fb64b-5529-4eb6-a23a-2f6a879b8086/collection/3612501-9e5a380d-9440-4e74-b1f2-bcf725a9b5d5?action=share&source=collection_link&creator=3612501"
+	},
+	"item": [
+		{
+			"name": "taldomTicket Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let res = pm.response.json();\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"taldomTicket\", res.Ticket);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "mcod",
+							"value": "470102",
+							"type": "text"
+						},
+						{
+							"key": "ogrn",
+							"value": "1025007829791",
+							"type": "text"
+						},
+						{
+							"key": "login",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "11",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://192.168.7.54:5002/auth.ashx?o=login",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"7",
+						"54"
+					],
+					"port": "5002",
+					"path": [
+						"auth.ashx"
+					],
+					"query": [
+						{
+							"key": "o",
+							"value": "login"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "taldomTicket",
+			"value": ""
+		}
+	]
+}

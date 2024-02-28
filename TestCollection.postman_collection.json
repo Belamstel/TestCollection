@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "309d7c26-2417-4caf-a413-855aad69c5bb",
-		"name": "Test Collection",
+		"name": "TestCollection",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3612501",
 		"_collection_link": "https://cloudy-space-446704.postman.co/workspace/regres~349fb64b-5529-4eb6-a23a-2f6a879b8086/collection/3612501-309d7c26-2417-4caf-a413-855aad69c5bb?action=share&source=collection_link&creator=3612501"
@@ -76,6 +76,12 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "taldomTicket",
+			"value": ""
 		}
 	]
 }

@@ -1,0 +1,1682 @@
+{
+	"info": {
+		"_postman_id": "1706d40c-df5a-4d78-86d6-498acd6dfb81",
+		"name": "Softrust.CallDoctor.Api.Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3612501",
+		"_collection_link": "https://cloudy-space-446704.postman.co/workspace/regres~349fb64b-5529-4eb6-a23a-2f6a879b8086/collection/3612501-1706d40c-df5a-4d78-86d6-498acd6dfb81?action=share&source=collection_link&creator=3612501"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "modemoTicket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"modemoTicket\", res.Ticket);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "mcod",
+									"value": "7777777",
+									"type": "text"
+								},
+								{
+									"key": "ogrn",
+									"value": "1025004646204",
+									"type": "text"
+								},
+								{
+									"key": "login",
+									"value": "post",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://192.168.7.54:5002/auth.ashx?o=login",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"7",
+								"54"
+							],
+							"port": "5002",
+							"path": [
+								"auth.ashx"
+							],
+							"query": [
+								{
+									"key": "o",
+									"value": "login"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Call Doctor",
+			"item": [
+				{
+					"name": "создание - запись к врачу - редактирование - завершение вызова",
+					"item": [
+						{
+							"name": "Создание новой карты вызова.",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const sqlRequest = {\r",
+											"  'method': 'POST',\r",
+											"  'url': 'http://192.168.7.69:8090/regress',\r",
+											"  'headers': {\r",
+											"    'Content-Type': 'text/plain'\r",
+											"  },\r",
+											"  body:\"update hlt_calldoctor set rf_CallDoctorStatusID = 4 where rf_mkabid = 2778657 and rf_CallDoctorStatusID = 5\"\r",
+											"};\r",
+											"\r",
+											"var todayDate = new Date().toISOString().split('T')[0];\r",
+											"pm.collectionVariables.set(\"dateSheduler\",todayDate);\r",
+											"var nextDate = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];\r",
+											"pm.collectionVariables.set(\"dateNext\", nextDate);\r",
+											"\r",
+											"pm.sendRequest(sqlRequest, function (err, res) {\r",
+											"    console.log (err ? err : res);\r",
+											"    //response = res.json();\r",
+											"    //if (err === null) {        pm.collectionVariables.set('rawsql',res.json())    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let res = pm.response.json();\r",
+											"pm.collectionVariables.set(\"callId\", res.data.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"address\": {\n    \"id\": 1000044923,\n    \"addressString\": \"Мурманская обл, г Мурманск, пр-кт Ленина, д 11А, кв 12\",\n    \"fiasGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"fiasHouseGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"fiasCityGuid\": \"b7127184-ead6-422b-b7cf-4fc7725b47a5\",\n    \"fiasStreetGuid\": \"e337956b-52b1-4c4f-b25d-996d39d9bb42\",\n    \"kladrCode\": \"5100000100000790001\",\n    \"countryId\": 184,\n    \"country\": \"РОССИЯ\",\n    \"region\": \"Мурманская обл\",\n    \"area\": \"\",\n    \"city\": \"г Мурманск\",\n    \"settlement\": \"\",\n    \"street\": \"пр-кт Ленина\",\n    \"house\": \"11А\",\n    \"block\": \"\",\n    \"construction\": \"\",\n    \"flat\": \"12\",\n    \"postIndex\": \"183032\",\n    \"okato\": \"47401000000\",\n    \"oktmo\": \"47701000001\",\n    \"codeIfns\": \"5100\",\n    \"codeIfnsLegal\": \"5100\"\n  },\n  \"ageParams\": {\n    \"age\": 28,\n    \"ageTitle\": 3,\n    \"birthDate\": \"1995-12-19T00:00:00.000\",\n    \"ageGroup\": {\n      \"id\": 3,\n      \"state\": 0,\n      \"name\": \"Взрослые\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": \"1\",\n      \"guid\": \"df9171a8-610c-459a-98ed-61ceefa277d2\",\n      \"isNew\": false\n    },\n    \"isChild\": false\n  },\n  \"beginSheduller\": \"1900-01-01T00:00:00.000\",\n  \"callCancelReason\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"callDoctorHistory\": [],\n  \"callFamily\": \"Постман\",\n  \"callName\": \"Пациент\",\n  \"callPatronymic\": \"Коллекционный\",\n  \"callPersonType\": {\n    \"id\": 1,\n    \"state\": 0,\n    \"name\": \"Пациент\",\n    \"guid\": \"e010b8a6-f629-4040-95e3-b4db7b162b48\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"causeCancel\": \"\",\n  \"codeDomophon\": \"\",\n  \"complaint\": \"температура\",\n  \"createDate\": \"2024-02-07T00:24:28.468\",\n  \"dateActive\": \"1900-01-01T00:00:00.000\",\n  \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n  \"dateResolved\": \"1900-01-01T00:00:00.000\",\n  \"dateStatus\": \"1900-01-01T00:00:00.000\",\n  \"description\": \"\",\n  \"doctorCalled\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"person\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"department\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMoId\": 0,\n      \"moOgrn\": \"\",\n      \"doctorZavPcode\": \"\",\n      \"doctorZavFio\": \"\",\n      \"departmentProfile\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"name\": \"\"\n      }\n    },\n    \"mo\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": \"\",\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\"\n    },\n    \"post\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"speciality\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"uchastoks\": [],\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 0,\n    \"isSpecial\": 0,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"00000000-0000-0000-0000-000000000000\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false\n  },\n  \"doctorPerform\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"person\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"department\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMoId\": 0,\n      \"moOgrn\": \"\",\n      \"doctorZavPcode\": \"\",\n      \"doctorZavFio\": \"\",\n      \"departmentProfile\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"name\": \"\"\n      }\n    },\n    \"mo\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": \"\",\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\"\n    },\n    \"post\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"speciality\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"uchastoks\": [],\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 0,\n    \"isSpecial\": 0,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"00000000-0000-0000-0000-000000000000\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false\n  },\n  \"endSheduller\": \"1900-01-01T00:00:00.000\",\n  \"entrance\": 0,\n  \"family\": \"Постман\",\n  \"floor\": 0,\n  \"guid\": \"00000000-0000-0000-0000-000000000000\",\n  \"id\": 0,\n  \"isFinalize\": false,\n  \"isNotification\": false,\n  \"lpu\": {\n    \"id\": 4022,\n    \"guid\": \"a505c08a-fb9c-40be-a934-2b1d522983c0\",\n    \"state\": \"Read\"\n  },\n  \"mkabId\": {{callDoctorMkabId}},\n  \"name\": \"Пациент\",\n  \"patronymic\": \"Коллекционный\",\n  \"phone\": \"79621149072\",\n  \"policyNumber\": \"5611989102373945\",\n  \"policySeries\": \"\",\n  \"possibleUchastoks\": [],\n  \"sex\": {\n    \"id\": 3,\n    \"state\": \"Read\",\n    \"name\": \"Мужской\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"begin\": \"1900-01-01T00:00:00\",\n    \"end\": \"2222-01-01T00:00:00\",\n    \"code\": \"1\"\n  },\n  \"source\": {\n    \"id\": 1017,\n    \"state\": 0,\n    \"name\": \"Регистратура\",\n    \"code\": \"Registry\",\n    \"isNew\": false\n  },\n  \"sourceSmp\": \"\",\n  \"status\": {\n    \"guid\": \"a290ef23-8127-4d78-8c9a-81bce4126946\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"name\": \"Новый\",\n    \"code\": \"0\",\n    \"id\": 5,\n    \"isNew\": false,\n    \"state\": 0\n  },\n  \"tapId\": 0,\n  \"typeCallDoctor\": {\n    \"id\": 2,\n    \"state\": 0,\n    \"name\": \"Первичный\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"uchastok\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"visitDate\": \"{{dateSheduler}}T00:24:09.893\",\n  \"version\": 0,\n  \"isSentToDoctor\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Получение полной карты вызова врача на дом.",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let res = pm.response.json();\r",
+											"pm.collectionVariables.set(\"callDoctorHistoryGuid\", res.data.callDoctorHistory[0].guid)\r",
+											"pm.collectionVariables.set(\"mkabId\", res.data.mkabId)\r",
+											"pm.collectionVariables.set(\"lpuid\", res.data.lpu.mainMo)\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor/{{callId}}?isNeedFullAddress=true",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor",
+										"{{callId}}"
+									],
+									"query": [
+										{
+											"key": "isNeedFullAddress",
+											"value": "true",
+											"description": "Признак получения полного адреса по КЛАДР."
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Запись карты вызова в расписание врача.",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let res = pm.response.json();\r",
+											"pm.collectionVariables.set(\"LPUDoctorID\", res.data.doctorCalled.person.id)\r",
+											"pm.collectionVariables.set(\"DocPRVDID\", res.data.doctorCalled.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "DocPrvdId",
+										"value": "5114",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": {{callId}},\n    \"state\": 0,\n    \"guid\": \"9682e57d-0d08-42ef-929d-19729485f3ee\",\n    \"address\": {\n        \"id\": 1000044923,\n        \"addressString\": \"Мурманская обл, г Мурманск, пр-кт Ленина, д 11А, кв 12\",\n        \"fiasGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n        \"fiasCityGuid\": \"b7127184-ead6-422b-b7cf-4fc7725b47a5\",\n        \"fiasStreetGuid\": \"e337956b-52b1-4c4f-b25d-996d39d9bb42\",\n        \"fiasHouseGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n        \"kladrCode\": \"5100000100000790001\",\n        \"postIndex\": \"183032\",\n        \"okato\": \"47401000000\",\n        \"oktmo\": \"47701000001\",\n        \"codeIfns\": \"5100\",\n        \"codeIfnsLegal\": \"5100\",\n        \"countryId\": 184,\n        \"country\": \"РОССИЯ\",\n        \"region\": \"Мурманская обл\",\n        \"area\": \"\",\n        \"city\": \"г Мурманск\",\n        \"settlement\": \"\",\n        \"street\": \"пр-кт Ленина\",\n        \"house\": \"11А\",\n        \"block\": \"\",\n        \"construction\": \"\",\n        \"flat\": \"12\"\n    },\n    \"uchastok\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": null,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"isNew\": true\n    },\n    \"possibleUchastoks\": [],\n    \"version\": 1,\n    \"ageParams\": {\n        \"age\": 28,\n        \"ageTitle\": 3,\n        \"birthDate\": \"1995-12-19T00:00:00.000\",\n        \"ageGroup\": {\n            \"id\": 3,\n            \"state\": 0,\n            \"name\": \"Взрослые\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": \"1\",\n            \"guid\": \"df9171a8-610c-459a-98ed-61ceefa277d2\",\n            \"isNew\": false\n        },\n        \"isChild\": false\n    },\n    \"callDoctorHistory\": [\n        {\n            \"changeElement\": \"\",\n            \"date\": \"{{dateSheduler}}T14:32:14.243\",\n            \"guid\": \"{{callDoctorHistoryGuid}}\",\n            \"id\": 116849,\n            \"editor\": \"Постман Врач Тестовый\",\n            \"newValue\": \"\",\n            \"oldValue\": \"\",\n            \"isNew\": false,\n            \"state\": 0\n        }\n    ],\n    \"callFamily\": \"Постман\",\n    \"callName\": \"Пациент\",\n    \"callPatronymic\": \"Коллекционный\",\n    \"callPersonType\": {\n        \"id\": 1,\n        \"state\": 0,\n        \"name\": \"Пациент\",\n        \"guid\": \"e010b8a6-f629-4040-95e3-b4db7b162b48\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": \"1\",\n        \"isNew\": false\n    },\n    \"causeCancel\": \"\",\n    \"codeDomophon\": \"\",\n    \"complaint\": \"температура\",\n    \"createDate\": \"{{dateSheduler}}T00:24:28.467\",\n    \"dateActive\": \"{{dateSheduler}}T14:34:59.589\",\n    \"dateResolved\": \"1900-01-01T00:00:00.000\",\n    \"doctorCalled\": {\n        \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n        \"person\": {\n            \"name\": \"Врач\",\n            \"family\": \"Постман\",\n            \"patronymic\": \"Тестовый\",\n            \"phone\": \"8005555555\",\n            \"code\": \"31\",\n            \"guid\": \"22e2a6fb-1ecd-44c2-9121-0a26dbd870a1\",\n            \"id\": 4306,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"department\": {\n            \"guid\": \"8a0fc3be-5626-42c0-a947-e019b8181106\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"name\": \"Терапевтическое отделение №1\",\n            \"code\": \"ТО1\",\n            \"id\": 2473,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"mo\": {\n            \"address\": \"\",\n            \"mainMo\": {\n                \"name\": \"Стенд ЕМИАС МО по ФРМО\",\n                \"code\": \"777777    \",\n                \"id\": 2314,\n                \"isNew\": false,\n                \"state\": 0\n            },\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"name\": \"СТ (Стенд ЕМИАС МО)\",\n            \"code\": \"СТ (Стенд ЕМИАС МО)\",\n            \"id\": 4022,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"post\": {\n            \"name\": \"Участковые терапевты городских участков\",\n            \"id\": 1098,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"speciality\": {\n            \"name\": \"Терапия\",\n            \"code\": \"76\",\n            \"id\": 1760,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"room\": {\n            \"name\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"id\": 0,\n            \"isNew\": true,\n            \"state\": 0\n        },\n        \"uchastoks\": null,\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 1,\n        \"isSpecial\": 1,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"loadingToday\": -1,\n        \"loadingTomorrow\": 8,\n        \"worcToDayBegin\": \"1900-01-01T00:00:00.000\",\n        \"worcToDayEnd\": \"1900-01-01T00:00:00.000\",\n        \"worcTomorrowBegin\": \"1900-01-01T00:00:00.000\",\n        \"worcTomorrowEnd\": \"1900-01-01T00:00:00.000\",\n        \"guid\": \"806e5874-d1b8-4487-ac86-02ac8a1b8814\",\n        \"begin\": \"2024-02-07T15:56:00.330\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"name\": \"\",\n        \"code\": \"203\",\n        \"id\": 5173,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"doctorPerform\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"не определено\",\n        \"begin\": \"1800-04-05T00:00:00.000\",\n        \"end\": \"1800-04-05T00:00:00.000\",\n        \"code\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"person\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"speciality\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"phone\": \"\",\n            \"code\": \"\",\n            \"isNew\": true\n        },\n        \"department\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": null,\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"departmentType\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"lpu\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\",\n                \"oid\": \"\"\n            },\n            \"mo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"isNew\": true\n        },\n        \"mo\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"ogrn\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"code\": null,\n            \"codeMo\": 0,\n            \"filialCode\": \"\",\n            \"fullName\": \"\",\n            \"name\": \"\",\n            \"phone\": \"\",\n            \"fax\": \"\",\n            \"email\": \"\",\n            \"address\": \"\",\n            \"license\": \"\",\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 0,\n                \"name\": \"\",\n                \"code\": null,\n                \"isNew\": true\n            },\n            \"okato\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"okpo\": \"\",\n            \"isNew\": true\n        },\n        \"post\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"isNew\": true\n        },\n        \"speciality\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"code\": null,\n            \"isNew\": true\n        },\n        \"departmentProfile\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\"\n        },\n        \"room\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"isNew\": true\n        },\n        \"uchastoks\": null,\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 0,\n        \"isSpecial\": 0,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n        \"doctor\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"speciality\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            }\n        },\n        \"isConclusion\": false,\n        \"loadingToday\": -1,\n        \"loadingTomorrow\": -1,\n        \"worcToDayBegin\": \"1900-01-01T00:00:00.000\",\n        \"worcToDayEnd\": \"1900-01-01T00:00:00.000\",\n        \"worcTomorrowBegin\": \"1900-01-01T00:00:00.000\",\n        \"worcTomorrowEnd\": \"1900-01-01T00:00:00.000\",\n        \"isNew\": true\n    },\n    \"entrance\": 0,\n    \"family\": \"Постман\",\n    \"floor\": 0,\n    \"isNotification\": false,\n    \"lpu\": {\n        \"id\": 4022,\n        \"state\": 0,\n        \"name\": \"СТ (Стенд ЕМИАС МО)\",\n        \"hostId\": 0,\n        \"mainMo\": 2314,\n        \"medOrganizations\": null,\n        \"address\": null,\n        \"begin\": \"0001-01-01T00:00:00.000\",\n        \"end\": \"0001-01-01T00:00:00.000\",\n        \"count\": 0,\n        \"guid\": \"a505c08a-fb9c-40be-a934-2b1d522983c0\",\n        \"code\": \"7777777   \",\n        \"isNew\": false\n    },\n    \"name\": \"Пациент\",\n    \"patronymic\": \"Коллекционный\",\n    \"phone\": \"79621149072\",\n    \"policyNumber\": \"5611989102373945\",\n    \"policySeries\": \"\",\n    \"sex\": {\n        \"id\": 3,\n        \"state\": 0,\n        \"name\": \"Мужской\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": \"1\",\n        \"isNew\": false\n    },\n    \"source\": {\n        \"id\": 1017,\n        \"state\": 0,\n        \"name\": \"Регистратура\",\n        \"code\": \"Registry\",\n        \"isNew\": false\n    },\n    \"sourceSmp\": \"\",\n    \"status\": {\n        \"guid\": \"6de77a11-8eea-4aad-ac28-487e91a11536\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"name\": \"Активный\",\n        \"code\": \"1\",\n        \"id\": 2,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"visitDate\": \"{{dateNext}}T14:34:59.589\",\n    \"isFinalize\": false,\n    \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n    \"dateStatus\": \"{{dateSheduler}}T14:34:59.589\",\n    \"mkabId\": {{callDoctorMkabId}},\n    \"tapId\": 0,\n    \"typeCallDoctor\": {\n        \"id\": 2,\n        \"state\": 0,\n        \"name\": \"Первичный\",\n        \"code\": \"1\",\n        \"isNew\": false\n    },\n    \"beginSheduller\": \"1900-01-01T00:00:00.000\",\n    \"endSheduller\": \"1900-01-01T00:00:00.000\",\n    \"callCancelReason\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": null,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"isNew\": true\n    },\n    \"isSentToDoctor\": false,\n    \"description\": \"\",\n    \"mkb\": {\n        \"name\": \"\",\n        \"code\": null,\n        \"id\": 0,\n        \"isNew\": true,\n        \"state\": 0\n    },\n    \"isNew\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor/write-sheduler/5173?dateSheduler={{dateNext}}",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor",
+										"write-sheduler",
+										"5173"
+									],
+									"query": [
+										{
+											"key": "dateSheduler",
+											"value": "{{dateNext}}",
+											"description": "dateSheduler"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Редактирование карты вызова",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"address\": {\n    \"id\": 1000044923,\n    \"addressString\": \"Мурманская обл, г Мурманск, пр-кт Ленина, д 11А, кв 12\",\n    \"fiasGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"fiasCityGuid\": \"b7127184-ead6-422b-b7cf-4fc7725b47a5\",\n    \"fiasStreetGuid\": \"e337956b-52b1-4c4f-b25d-996d39d9bb42\",\n    \"fiasHouseGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"kladrCode\": \"5100000100000790001\",\n    \"postIndex\": \"183032\",\n    \"okato\": \"47401000000\",\n    \"oktmo\": \"47701000001\",\n    \"codeIfns\": \"5100\",\n    \"codeIfnsLegal\": \"5100\",\n    \"countryId\": 184,\n    \"country\": \"РОССИЯ\",\n    \"region\": \"Мурманская обл\",\n    \"area\": \"\",\n    \"city\": \"г Мурманск\",\n    \"settlement\": \"\",\n    \"street\": \"пр-кт Ленина\",\n    \"house\": \"11А\",\n    \"block\": \"\",\n    \"construction\": \"\",\n    \"flat\": \"12\"\n  },\n  \"ageParams\": {\n    \"age\": 28,\n    \"ageTitle\": 3,\n    \"birthDate\": \"1995-12-19T00:00:00.000\",\n    \"ageGroup\": {\n      \"id\": 3,\n      \"state\": 0,\n      \"name\": \"Взрослые\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": \"1\",\n      \"guid\": \"df9171a8-610c-459a-98ed-61ceefa277d2\",\n      \"isNew\": false\n    },\n    \"isChild\": false\n  },\n  \"beginSheduller\": \"{{dateNext}}T00:00:00.000\",\n  \"callCancelReason\": {\n    \"id\": 0,\n    \"state\": 0,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": null,\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"isNew\": true\n  },\n  \"callDoctorHistory\": [\n    {\n      \"changeElement\": \"\",\n      \"date\": \"{{dateSheduler}}T15:05:10.793\",\n      \"guid\": \"0bb3db43-8083-4f51-9c8e-21bd2ee5175f\",\n      \"id\": 116902,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"\",\n      \"oldValue\": \"\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Статус\",\n      \"date\": \"{{dateSheduler}}T15:36:47.057\",\n      \"guid\": \"ff36e094-97c0-4545-adff-e6af107dd0f4\",\n      \"id\": 116904,\n      \"editor\": \"Таиров Александр Васильевич\",\n      \"newValue\": \"Активный\",\n      \"oldValue\": \"Новый\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Дата перевода в статус активный\",\n      \"date\": \"{{dateSheduler}}T15:36:47.057\",\n      \"guid\": \"6a593468-51fd-4bd9-b56e-a0a356f939be\",\n      \"id\": 116905,\n      \"editor\": \"Таиров Александр Васильевич\",\n      \"newValue\": \"08.02.2024 15:36\",\n      \"oldValue\": \"\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Назначенный врач\",\n      \"date\": \"{{dateSheduler}}T15:36:47.057\",\n      \"guid\": \"bfd6d4d2-1107-4478-851a-dc49c1ffa702\",\n      \"id\": 116906,\n      \"editor\": \"Таиров Александр Васильевич\",\n      \"newValue\": \"Постман Врач Тестовый\",\n      \"oldValue\": \"не определено не определено не определено\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Статус\",\n      \"date\": \"{{dateSheduler}}T16:09:07.697\",\n      \"guid\": \"76552193-a6fc-43a2-a28b-408021f977a2\",\n      \"id\": 116931,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Активный\",\n      \"oldValue\": \"Новый\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Дата перевода в статус активный\",\n      \"date\": \"{{dateSheduler}}T16:09:07.697\",\n      \"guid\": \"1ad53e9f-e4c5-4ecc-8897-4533ea71b858\",\n      \"id\": 116932,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"08.02.2024 14:34\",\n      \"oldValue\": \"\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Назначенный врач\",\n      \"date\": \"{{dateSheduler}}T16:09:07.700\",\n      \"guid\": \"2ba71a70-d24f-4911-a37a-483b7d60dd90\",\n      \"id\": 116933,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Постман Врач Тестовый\",\n      \"oldValue\": \"не определено не определено не определено\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Статус\",\n      \"date\": \"{{dateSheduler}}T16:15:11.567\",\n      \"guid\": \"260022bd-15d6-4226-b1d4-68a72d0dbed4\",\n      \"id\": 116954,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Активный\",\n      \"oldValue\": \"Новый\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Дата перевода в статус активный\",\n      \"date\": \"{{dateSheduler}}T16:15:11.567\",\n      \"guid\": \"f2011e9a-3e5d-4241-b822-3d2180aca979\",\n      \"id\": 116955,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"08.02.2024 14:34\",\n      \"oldValue\": \"\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Назначенный врач\",\n      \"date\": \"{{dateSheduler}}T16:15:11.567\",\n      \"guid\": \"10172d64-001c-4158-8816-042e0b49d3e1\",\n      \"id\": 116956,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Постман Врач Тестовый\",\n      \"oldValue\": \"не определено не определено не определено\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Статус\",\n      \"date\": \"{{dateSheduler}}T16:18:02.007\",\n      \"guid\": \"3a47202b-477a-4420-a0b8-fd6271d6f7f1\",\n      \"id\": 116976,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Активный\",\n      \"oldValue\": \"Новый\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Дата перевода в статус активный\",\n      \"date\": \"{{dateSheduler}}T16:18:02.010\",\n      \"guid\": \"9a057a3c-3726-47d7-9ff9-6a62a03a216b\",\n      \"id\": 116977,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"08.02.2024 14:34\",\n      \"oldValue\": \"\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Назначенный врач\",\n      \"date\": \"{{dateSheduler}}T16:18:02.010\",\n      \"guid\": \"aae4cbcd-d495-44ab-9624-092a6e51516a\",\n      \"id\": 116978,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Постман Врач Тестовый\",\n      \"oldValue\": \"не определено не определено не определено\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Статус\",\n      \"date\": \"{{dateSheduler}}T09:37:23.370\",\n      \"guid\": \"a83d4560-c6b4-48b1-8e50-c3a6f6919458\",\n      \"id\": 116999,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Отмененный\",\n      \"oldValue\": \"Активный\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Статус\",\n      \"date\": \"{{dateSheduler}}T10:18:36.493\",\n      \"guid\": \"2baed059-9cfc-473a-96bd-d0d76ecea597\",\n      \"id\": 117047,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Активный\",\n      \"oldValue\": \"Новый\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Дата перевода в статус активный\",\n      \"date\": \"{{dateSheduler}}T10:18:36.493\",\n      \"guid\": \"278e3336-5016-415f-ab5b-cc3ae98f7749\",\n      \"id\": 117048,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"09.02.2024 14:34\",\n      \"oldValue\": \"\",\n      \"isNew\": false,\n      \"state\": 0\n    },\n    {\n      \"changeElement\": \"Назначенный врач\",\n      \"date\": \"{{dateSheduler}}T10:18:36.493\",\n      \"guid\": \"643e8e6c-2485-4aff-9243-64cf9f03c30a\",\n      \"id\": 117049,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"Постман Врач Тестовый\",\n      \"oldValue\": \"не определено не определено не определено\",\n      \"isNew\": false,\n      \"state\": 0\n    }\n  ],\n  \"callFamily\": \"Постман\",\n  \"callName\": \"Пациент\",\n  \"callPatronymic\": \"Коллекционный\",\n  \"callPersonType\": {\n    \"id\": 1,\n    \"state\": 0,\n    \"name\": \"Пациент\",\n    \"guid\": \"e010b8a6-f629-4040-95e3-b4db7b162b48\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"causeCancel\": \"\",\n  \"codeDomophon\": \"\",\n  \"complaint\": \"температура\",\n  \"createDate\": \"{{dateSheduler}}T00:24:28.467\",\n  \"dateActive\": \"{{dateSheduler}}T14:34:59.590\",\n  \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n  \"dateResolved\": \"1900-01-01T00:00:00.000\",\n  \"dateStatus\": \"{{dateSheduler}}T14:34:59.590\",\n  \"description\": \"тест изменения карты вызова\",\n  \"doctorCalled\": {\n    \"id\": 5173,\n    \"state\": 0,\n    \"name\": \"\",\n    \"begin\": \"{{dateSheduler}}T01:56:00.330\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"203\",\n    \"guid\": \"806e5874-d1b8-4487-ac86-02ac8a1b8814\",\n    \"person\": {\n      \"id\": 4306,\n      \"state\": 0,\n      \"name\": \"Врач\",\n      \"family\": \"Постман\",\n      \"patronymic\": \"Тестовый\",\n      \"setView\": \"\",\n      \"guid\": \"22e2a6fb-1ecd-44c2-9121-0a26dbd870a1\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"phone\": \"8005555555\",\n      \"code\": \"31\",\n      \"isNew\": false\n    },\n    \"department\": {\n      \"id\": 2473,\n      \"state\": 0,\n      \"name\": \"Терапевтическое отделение №1\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": \"ТО1\",\n      \"guid\": \"8a0fc3be-5626-42c0-a947-e019b8181106\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"isNew\": false\n    },\n    \"mo\": {\n      \"id\": 4022,\n      \"state\": 0,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": \"СТ (Стенд ЕМИАС МО)\",\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"СТ (Стенд ЕМИАС МО)\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 2314,\n        \"state\": 0,\n        \"name\": \"Стенд ЕМИАС МО по ФРМО\",\n        \"code\": \"777777    \",\n        \"isNew\": false\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\",\n      \"isNew\": false\n    },\n    \"post\": {\n      \"id\": 1098,\n      \"state\": 0,\n      \"name\": \"Участковые терапевты городских участков\",\n      \"isNew\": false\n    },\n    \"speciality\": {\n      \"id\": 1760,\n      \"state\": 0,\n      \"name\": \"Терапия\",\n      \"code\": \"76\",\n      \"isNew\": false\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"isNew\": true\n    },\n    \"uchastoks\": null,\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 1,\n    \"isSpecial\": 1,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false,\n    \"loadingToday\": -1,\n    \"loadingTomorrow\": -1,\n    \"worcToDayBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcToDayEnd\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowEnd\": \"1900-01-01T00:00:00.000\",\n    \"isNew\": false\n  },\n  \"doctorPerform\": {\n    \"id\": 0,\n    \"state\": 0,\n    \"name\": \"не определено\",\n    \"begin\": \"1800-04-05T00:00:00.000\",\n    \"end\": \"1800-04-05T00:00:00.000\",\n    \"code\": \"\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"person\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"phone\": \"\",\n      \"code\": \"\",\n      \"isNew\": true\n    },\n    \"department\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": null,\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"isNew\": true\n    },\n    \"mo\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": null,\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"code\": null,\n        \"isNew\": true\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\",\n      \"isNew\": true\n    },\n    \"post\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"isNew\": true\n    },\n    \"speciality\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"code\": null,\n      \"isNew\": true\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"isNew\": true\n    },\n    \"uchastoks\": null,\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 0,\n    \"isSpecial\": 0,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false,\n    \"loadingToday\": -1,\n    \"loadingTomorrow\": -1,\n    \"worcToDayBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcToDayEnd\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowEnd\": \"1900-01-01T00:00:00.000\",\n    \"isNew\": true\n  },\n  \"endSheduller\": \"{{dateNext}}T00:15:00.000\",\n  \"entrance\": 0,\n  \"family\": \"Постман\",\n  \"floor\": 0,\n  \"guid\": \"9682e57d-0d08-42ef-929d-19729485f3ee\",\n  \"id\": {{callId}},\n  \"isFinalize\": false,\n  \"isNotification\": false,\n  \"lpu\": {\n    \"id\": 4022,\n    \"state\": 0,\n    \"name\": \"СТ (Стенд ЕМИАС МО)\",\n    \"hostId\": 0,\n    \"mainMo\": 2314,\n    \"medOrganizations\": null,\n    \"address\": null,\n    \"begin\": \"0001-01-01T00:00:00.000\",\n    \"end\": \"0001-01-01T00:00:00.000\",\n    \"count\": 0,\n    \"guid\": \"a505c08a-fb9c-40be-a934-2b1d522983c0\",\n    \"code\": \"7777777   \",\n    \"isNew\": false\n  },\n  \"mkabId\": {{mkabId}},\n  \"name\": \"Пациент\",\n  \"patronymic\": \"Коллекционный\",\n  \"phone\": \"79621149072\",\n  \"policyNumber\": \"5611989102373945\",\n  \"policySeries\": \"\",\n  \"possibleUchastoks\": [],\n  \"sex\": {\n    \"id\": 3,\n    \"state\": 0,\n    \"name\": \"Мужской\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"source\": {\n    \"id\": 1017,\n    \"state\": 0,\n    \"name\": \"Регистратура\",\n    \"code\": \"Registry\",\n    \"isNew\": false\n  },\n  \"sourceSmp\": \"\",\n  \"status\": {\n    \"id\": 2,\n    \"state\": 0,\n    \"name\": \"Активный\",\n    \"guid\": \"6de77a11-8eea-4aad-ac28-487e91a11536\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"tapId\": 0,\n  \"typeCallDoctor\": {\n    \"id\": 2,\n    \"state\": 0,\n    \"name\": \"Первичный\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"uchastok\": {\n    \"id\": 0,\n    \"state\": 0,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": null,\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"isNew\": true\n  },\n  \"visitDate\": \"{{dateSheduler}}T00:00:00.000\",\n  \"version\": 2,\n  \"isSentToDoctor\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Завершение вызова.",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": {{callId}},\n    \"state\": 0,\n    \"guid\": \"6ab6e161-d2f2-49f0-9fda-8e5a32a5fdce\",\n    \"address\": {\n        \"localitySocr\": null,\n        \"locality\": null,\n        \"citySocr\": null,\n        \"city\": null,\n        \"regionSocr\": null,\n        \"region\": null,\n        \"areaSocr\": \"г\",\n        \"area\": \"Москва\",\n        \"flags\": 0,\n        \"isCity\": false,\n        \"appartment\": \"1\",\n        \"construction\": \"\",\n        \"building\": \"\",\n        \"number\": \"122\",\n        \"dopData\": \"\",\n        \"addressStringMin\": \"г. Москва, ул. Лубянка Б.\",\n        \"addressString\": \"г. Москва, ул. Лубянка Б., д.122, кв.1\",\n        \"code\": \"77000000000701800\",\n        \"addressId\": 1000052132,\n        \"street\": \"Большая Лубянка\",\n        \"streetSocr\": \"ул\",\n        \"country\": \"РОССИЯ\",\n        \"countryCode\": \"643\",\n        \"postIndex\": \"\",\n        \"okato\": \"45286565000\"\n    },\n    \"uchastok\": {\n        \"id\": 355,\n        \"state\": 0,\n        \"name\": \"Терапевтический\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": \"251   \",\n        \"guid\": \"361a989d-ea16-4b8b-810d-05ea246cb037\",\n        \"docPrvdId\": 333,\n        \"medicalResource\": {\n            \"name\": \"Петр\",\n            \"family\": \"Иванов\",\n            \"patronymic\": \"Сергеевич\",\n            \"phone\": \"88005553535\",\n            \"code\": \"911\",\n            \"guid\": \"61adc18b-8d3a-48c9-9cc7-5bb9ab102d3c\",\n            \"id\": 1870,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"isNew\": false\n    },\n    \"possibleUchastoks\": [],\n    \"version\": 1,\n    \"ageParams\": {\n        \"age\": 17,\n        \"ageTitle\": 3,\n        \"birthDate\": \"2003-09-10T00:00:00.000\",\n        \"ageGroup\": {\n            \"id\": 3,\n            \"state\": 0,\n            \"name\": \"Дети\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": \"2\",\n            \"guid\": \"eceb7af3-81d3-47b8-b2fe-781c6f77acf9\",\n            \"isNew\": false\n        },\n        \"isChild\": true\n    },\n    \"callDoctorHistory\": [\n        {\n            \"changeElement\": \"\",\n            \"date\": \"2021-08-26T15:50:29.667\",\n            \"guid\": \"b1c93cf7-cbcd-4944-a75b-3dbe4246e387\",\n            \"id\": 196771,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"\",\n            \"oldValue\": \"\",\n            \"isNew\": false,\n            \"state\": 0\n        },\n        {\n            \"changeElement\": \"Статус\",\n            \"date\": \"2021-08-26T15:56:19.827\",\n            \"guid\": \"9cfe7c1d-51e2-4077-9991-1c010d23a99d\",\n            \"id\": 196772,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"Активный\",\n            \"oldValue\": \"Новый\",\n            \"isNew\": false,\n            \"state\": 0\n        },\n        {\n            \"changeElement\": \"Дата перевода в статус активный\",\n            \"date\": \"2021-08-26T15:56:19.827\",\n            \"guid\": \"e49e07a2-2a18-47f0-96e6-69c6cace4c67\",\n            \"id\": 196773,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"26.08.2021 15:56\",\n            \"oldValue\": \"\",\n            \"isNew\": false,\n            \"state\": 0\n        },\n        {\n            \"changeElement\": \"Назначенный врач\",\n            \"date\": \"2021-08-26T15:56:19.827\",\n            \"guid\": \"3b5bcec6-8aad-4fa6-b4a9-739b5000c74f\",\n            \"id\": 196774,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"Быков Андрей Евгеньевич\",\n            \"oldValue\": \"не определено не определено не определено\",\n            \"isNew\": false,\n            \"state\": 0\n        }\n    ],\n    \"callFamily\": \"\",\n    \"callName\": \"\",\n    \"callPatronymic\": \"\",\n    \"callPersonType\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"code\": null,\n        \"isNew\": true\n    },\n    \"causeCancel\": \"\",\n    \"codeDomophon\": \"\",\n    \"complaint\": \"температура\",\n    \"createDate\": \"2021-08-26T15:50:29.720\",\n    \"dateActive\": \"2021-08-26T15:56:20.003\",\n    \"dateResolved\": \"1900-01-01T00:00:00.000\",\n    \"doctorCalled\": {\n        \"id\": 2198,\n        \"state\": 0,\n        \"name\": \"\",\n        \"begin\": \"1899-12-27T00:00:00.000\",\n        \"end\": \"2222-01-01T23:59:59.000\",\n        \"code\": \"2015\",\n        \"guid\": \"14911706-60ea-e911-a220-2c4d5452990f\",\n        \"person\": {\n            \"id\": 3086,\n            \"state\": 0,\n            \"name\": \"Андрей\",\n            \"family\": \"Быков\",\n            \"patronymic\": \"Евгеньевич\",\n            \"setView\": \"\",\n            \"guid\": \"969f22ff-5fea-e911-a220-2c4d5452990f\",\n            \"phone\": \"9205672002\",\n            \"code\": \"2015\",\n            \"isNew\": false\n        },\n        \"department\": {\n            \"id\": 2358,\n            \"state\": 0,\n            \"name\": \"Кабинет врача-терапевта\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": \"210\",\n            \"guid\": \"87575a5b-7800-4608-a50d-df8992b90f3e\",\n            \"departmentType\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"lpu\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"isNew\": false\n        },\n        \"mo\": {\n            \"id\": 1839,\n            \"state\": 0,\n            \"ogrn\": \"\",\n            \"code\": \"Поликлиника (ГБУЗ МО \\\"Талдомская ЦРБ\\\")\",\n            \"codeMo\": 0,\n            \"filialCode\": \"\",\n            \"fullName\": \"\",\n            \"name\": \"Поликлиника (ГБУЗ МО \\\"Талдомская ЦРБ\\\")\",\n            \"phone\": \"\",\n            \"fax\": \"\",\n            \"email\": \"\",\n            \"address\": \"\",\n            \"license\": \"\",\n            \"mainMo\": {\n                \"id\": 1838,\n                \"state\": 0,\n                \"name\": \"ГБУЗ МО Талдомская ЦРБ TEST\",\n                \"code\": \"470101    \",\n                \"isNew\": false\n            },\n            \"okato\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"okpo\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"isNew\": false\n        },\n        \"post\": {\n            \"id\": 1846,\n            \"state\": 0,\n            \"name\": \"Онкологи\",\n            \"isNew\": false\n        },\n        \"speciality\": {\n            \"id\": 1965,\n            \"state\": 0,\n            \"name\": \"Онкология\",\n            \"code\": \"41\",\n            \"isNew\": false\n        },\n        \"room\": {\n            \"id\": 468,\n            \"state\": 0,\n            \"name\": \"216\",\n            \"guid\": \"accc99bd-6fd3-486a-ab77-6bc7944a0f28\",\n            \"isNew\": false\n        },\n        \"uchastoks\": [\n            {\n                \"id\": 236,\n                \"state\": 0,\n                \"name\": \"3-й Терапевтический\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"3-Тер \",\n                \"guid\": \"2f34f7a9-5f70-4bfd-b2b8-ecaa5a1b8d22\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            }\n        ],\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 1,\n        \"isSpecial\": 1,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n        \"doctor\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"isConclusion\": false,\n        \"loadingToday\": -1,\n        \"loadingTomorrow\": -1,\n        \"worcToDayBegin\": \"1900-01-01T00:00:00\",\n        \"worcToDayEnd\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowBegin\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowEnd\": \"1900-01-01T00:00:00\",\n        \"isNew\": false\n    },\n    \"doctorPerform\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"не определено\",\n        \"begin\": \"1800-04-05T00:00:00.000\",\n        \"end\": \"1800-04-05T00:00:00.000\",\n        \"code\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"person\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"phone\": \"\",\n            \"code\": \"\",\n            \"isNew\": true\n        },\n        \"department\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": null,\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"departmentType\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"lpu\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"isNew\": true\n        },\n        \"mo\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"ogrn\": \"\",\n            \"code\": null,\n            \"codeMo\": 0,\n            \"filialCode\": \"\",\n            \"fullName\": \"\",\n            \"name\": \"\",\n            \"phone\": \"\",\n            \"fax\": \"\",\n            \"email\": \"\",\n            \"address\": \"\",\n            \"license\": \"\",\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 0,\n                \"name\": \"\",\n                \"code\": null,\n                \"isNew\": true\n            },\n            \"okato\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"okpo\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"isNew\": true\n        },\n        \"post\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"isNew\": true\n        },\n        \"speciality\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"code\": null,\n            \"isNew\": true\n        },\n        \"room\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"isNew\": true\n        },\n        \"uchastoks\": [\n            {\n                \"id\": 0,\n                \"state\": 0,\n                \"name\": \"не определено\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"      \",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": true\n            },\n            {\n                \"id\": 272,\n                \"state\": 0,\n                \"name\": \"Тестовый очистка\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"test1 \",\n                \"guid\": \"dc1ca63a-09a7-e911-a21d-2c4d5452990f\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 345,\n                \"state\": 0,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2021-07-07T14:36:14.153\",\n                \"code\": \"      \",\n                \"guid\": \"b87e5cf0-92dc-4da2-bfd9-457bd677b3d0\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 346,\n                \"state\": 0,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2021-07-07T16:39:58.893\",\n                \"code\": \"      \",\n                \"guid\": \"5d80be6a-9085-4e14-b18d-2068216c8387\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 348,\n                \"state\": 0,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2021-07-07T16:39:53.407\",\n                \"code\": \"      \",\n                \"guid\": \"e34ce09b-16ae-4e11-aa9e-496b0838d4f0\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 361,\n                \"state\": 0,\n                \"name\": \"не определено\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"      \",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            }\n        ],\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 0,\n        \"isSpecial\": 0,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n        \"doctor\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"isConclusion\": false,\n        \"loadingToday\": -1,\n        \"loadingTomorrow\": -1,\n        \"worcToDayBegin\": \"1900-01-01T00:00:00\",\n        \"worcToDayEnd\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowBegin\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowEnd\": \"1900-01-01T00:00:00\",\n        \"isNew\": true\n    },\n    \"entrance\": 0,\n    \"family\": \"Тест\",\n    \"floor\": 0,\n    \"isNotification\": false,\n    \"lpu\": {\n        \"hostId\": 0,\n        \"mainMo\": 3736,\n        \"medOrganizations\": null,\n        \"address\": \"Московская обл., Талдомский р-н., рп. Северный, ул. Центральная, д.4\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"count\": 0,\n        \"guid\": \"e16eabc7-77df-4915-b519-58816cde4028\",\n        \"name\": \"Амбулатория пос.Северный\",\n        \"code\": \"470107    \",\n        \"id\": 25384,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"name\": \"Направления\",\n    \"patronymic\": \"Вдиспе\",\n    \"phone\": \"79033517794\",\n    \"policyNumber\": \"65465465465456\",\n    \"policySeries\": \"343434\",\n    \"sex\": {\n        \"id\": 3,\n        \"state\": 0,\n        \"name\": \"Женский\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"code\": \"2\",\n        \"isNew\": false\n    },\n    \"source\": {\n        \"id\": 5,\n        \"state\": 0,\n        \"name\": \"Регистратура\",\n        \"code\": \"5\",\n        \"isNew\": false\n    },\n    \"sourceSmp\": \"\",\n    \"status\": {\n        \"guid\": \"7d17ffcf-1f1b-4d55-8308-e64669f36817\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"name\": \"Обслуженный\",\n        \"code\": \"5\",\n        \"id\": 7,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"visitDate\": \"2021-08-26T21:00:00.000\",\n    \"isFinalize\": false,\n    \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n    \"dateStatus\": \"2021-08-26T15:56:20.003\",\n    \"mkabId\": 2662405,\n    \"tapId\": 0,\n    \"typeCallDoctor\": {\n        \"id\": 2,\n        \"state\": 0,\n        \"name\": \"Первичный\",\n        \"code\": \"1\",\n        \"isNew\": false\n    },\n    \"beginSheduller\": \"2021-08-26T21:00:00.000\",\n    \"endSheduller\": \"2021-08-26T23:00:00.000\",\n    \"callCancelReason\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": null,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"isNew\": true\n    },\n    \"isSentToDoctor\": true,\n    \"description\": \"\",\n    \"mkb\": {\n        \"name\": \"\",\n        \"code\": null,\n        \"id\": 0,\n        \"isNew\": true,\n        \"state\": 0\n    },\n    \"isNew\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor/call-close",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor",
+										"call-close"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "создание - перевод в другое лпу - отмена вызова",
+					"item": [
+						{
+							"name": "Создание новой карты вызова.",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const sqlRequest = {\r",
+											"  'method': 'POST',\r",
+											"  'url': 'http://192.168.7.69:8090/regress',\r",
+											"  'headers': {\r",
+											"    'Content-Type': 'text/plain'\r",
+											"  },\r",
+											"  body:\"update hlt_calldoctor set rf_CallDoctorStatusID = 4 where rf_mkabid = 2778657 and rf_CallDoctorStatusID = 5\"\r",
+											"};\r",
+											"\r",
+											"var todayDate = new Date().toISOString().split('T')[0];\r",
+											"pm.collectionVariables.set(\"dateSheduler\",todayDate);\r",
+											"var nextDate = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];\r",
+											"pm.collectionVariables.set(\"dateNext\", nextDate);\r",
+											"\r",
+											"pm.sendRequest(sqlRequest, function (err, res) {\r",
+											"    console.log (err ? err : res);\r",
+											"    //response = res.json();\r",
+											"    //if (err === null) {        pm.collectionVariables.set('rawsql',res.json())    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let res = pm.response.json();\r",
+											"pm.collectionVariables.set(\"callId\", res.data.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"address\": {\n    \"id\": 1000044923,\n    \"addressString\": \"Мурманская обл, г Мурманск, пр-кт Ленина, д 11А, кв 12\",\n    \"fiasGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"fiasHouseGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"fiasCityGuid\": \"b7127184-ead6-422b-b7cf-4fc7725b47a5\",\n    \"fiasStreetGuid\": \"e337956b-52b1-4c4f-b25d-996d39d9bb42\",\n    \"kladrCode\": \"5100000100000790001\",\n    \"countryId\": 184,\n    \"country\": \"РОССИЯ\",\n    \"region\": \"Мурманская обл\",\n    \"area\": \"\",\n    \"city\": \"г Мурманск\",\n    \"settlement\": \"\",\n    \"street\": \"пр-кт Ленина\",\n    \"house\": \"11А\",\n    \"block\": \"\",\n    \"construction\": \"\",\n    \"flat\": \"12\",\n    \"postIndex\": \"183032\",\n    \"okato\": \"47401000000\",\n    \"oktmo\": \"47701000001\",\n    \"codeIfns\": \"5100\",\n    \"codeIfnsLegal\": \"5100\"\n  },\n  \"ageParams\": {\n    \"age\": 28,\n    \"ageTitle\": 3,\n    \"birthDate\": \"1995-12-19T00:00:00.000\",\n    \"ageGroup\": {\n      \"id\": 3,\n      \"state\": 0,\n      \"name\": \"Взрослые\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": \"1\",\n      \"guid\": \"df9171a8-610c-459a-98ed-61ceefa277d2\",\n      \"isNew\": false\n    },\n    \"isChild\": false\n  },\n  \"beginSheduller\": \"1900-01-01T00:00:00.000\",\n  \"callCancelReason\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"callDoctorHistory\": [],\n  \"callFamily\": \"Постман\",\n  \"callName\": \"Пациент\",\n  \"callPatronymic\": \"Коллекционный\",\n  \"callPersonType\": {\n    \"id\": 1,\n    \"state\": 0,\n    \"name\": \"Пациент\",\n    \"guid\": \"e010b8a6-f629-4040-95e3-b4db7b162b48\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"causeCancel\": \"\",\n  \"codeDomophon\": \"\",\n  \"complaint\": \"температура\",\n  \"createDate\": \"2024-02-07T00:24:28.468\",\n  \"dateActive\": \"1900-01-01T00:00:00.000\",\n  \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n  \"dateResolved\": \"1900-01-01T00:00:00.000\",\n  \"dateStatus\": \"1900-01-01T00:00:00.000\",\n  \"description\": \"\",\n  \"doctorCalled\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"person\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"department\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMoId\": 0,\n      \"moOgrn\": \"\",\n      \"doctorZavPcode\": \"\",\n      \"doctorZavFio\": \"\",\n      \"departmentProfile\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"name\": \"\"\n      }\n    },\n    \"mo\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": \"\",\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\"\n    },\n    \"post\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"speciality\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"uchastoks\": [],\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 0,\n    \"isSpecial\": 0,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"00000000-0000-0000-0000-000000000000\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false\n  },\n  \"doctorPerform\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"person\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"department\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMoId\": 0,\n      \"moOgrn\": \"\",\n      \"doctorZavPcode\": \"\",\n      \"doctorZavFio\": \"\",\n      \"departmentProfile\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"name\": \"\"\n      }\n    },\n    \"mo\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": \"\",\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\"\n    },\n    \"post\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"speciality\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"uchastoks\": [],\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 0,\n    \"isSpecial\": 0,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"00000000-0000-0000-0000-000000000000\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false\n  },\n  \"endSheduller\": \"1900-01-01T00:00:00.000\",\n  \"entrance\": 0,\n  \"family\": \"Постман\",\n  \"floor\": 0,\n  \"guid\": \"00000000-0000-0000-0000-000000000000\",\n  \"id\": 0,\n  \"isFinalize\": false,\n  \"isNotification\": false,\n  \"lpu\": {\n    \"id\": 4022,\n    \"guid\": \"a505c08a-fb9c-40be-a934-2b1d522983c0\",\n    \"state\": \"Read\"\n  },\n  \"mkabId\": {{callDoctorMkabId}},\n  \"name\": \"Пациент\",\n  \"patronymic\": \"Коллекционный\",\n  \"phone\": \"79621149072\",\n  \"policyNumber\": \"5611989102373945\",\n  \"policySeries\": \"\",\n  \"possibleUchastoks\": [],\n  \"sex\": {\n    \"id\": 3,\n    \"state\": \"Read\",\n    \"name\": \"Мужской\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"begin\": \"1900-01-01T00:00:00\",\n    \"end\": \"2222-01-01T00:00:00\",\n    \"code\": \"1\"\n  },\n  \"source\": {\n    \"id\": 1017,\n    \"state\": 0,\n    \"name\": \"Регистратура\",\n    \"code\": \"Registry\",\n    \"isNew\": false\n  },\n  \"sourceSmp\": \"\",\n  \"status\": {\n    \"guid\": \"a290ef23-8127-4d78-8c9a-81bce4126946\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"name\": \"Новый\",\n    \"code\": \"0\",\n    \"id\": 5,\n    \"isNew\": false,\n    \"state\": 0\n  },\n  \"tapId\": 0,\n  \"typeCallDoctor\": {\n    \"id\": 2,\n    \"state\": 0,\n    \"name\": \"Первичный\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"uchastok\": {\n    \"id\": 0,\n    \"state\": 1,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"visitDate\": \"{{dateSheduler}}T00:24:09.893\",\n  \"version\": 0,\n  \"isSentToDoctor\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Получение списка ЛПУ локальной базы, в которых есть расписание.",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let res = pm.response.json();\r",
+											"pm.collectionVariables.set(\"mcodMainLpu\", res.data.code)\r",
+											"pm.collectionVariables.set(\"mcodLpu\", res.data.medOrganizations[0].code)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/Lpu/find?mainLpuId=2314&ageGroupCode=1&filter={\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Code\",\"filterType\":2,\"value\":\"7777777   \",\"operatorType\":0,\"operands\":null},{\"field\":\"Begin\",\"filterType\":5,\"value\":\"2024-02-09T09:44:27.579\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"2024-02-09T09:44:27.579\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":9,\"skip\":0}&isNeedCount=true",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"Lpu",
+										"find"
+									],
+									"query": [
+										{
+											"key": "mainLpuId",
+											"value": "2314",
+											"description": "Идентификатор головного ЛПУ."
+										},
+										{
+											"key": "ageGroupCode",
+											"value": "1",
+											"description": "Код возрастной группы."
+										},
+										{
+											"key": "filter",
+											"value": "{\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Code\",\"filterType\":2,\"value\":\"7777777   \",\"operatorType\":0,\"operands\":null},{\"field\":\"Begin\",\"filterType\":5,\"value\":\"2024-02-09T09:44:27.579\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"2024-02-09T09:44:27.579\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":9,\"skip\":0}",
+											"description": "Фильтр ЛПУ."
+										},
+										{
+											"key": "isNeedCount",
+											"value": "true",
+											"description": "Признак необходимости получения количества."
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Сохранение участка.",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"address\": {\n        \"localitySocr\": null,\n        \"locality\": null,\n        \"citySocr\": null,\n        \"city\": null,\n        \"regionSocr\": null,\n        \"region\": null,\n        \"areaSocr\": null,\n        \"area\": null,\n        \"flags\": 0,\n        \"isCity\": false,\n        \"appartment\": \"\",\n        \"construction\": \"\",\n        \"building\": \"\",\n        \"number\": \"1\",\n        \"dopData\": \"\",\n        \"addressStringMin\": \"Московская обл.\",\n        \"addressString\": \"Московская обл.,1\",\n        \"code\": \"5000000000000\",\n        \"addressId\": 71437,\n        \"street\": null,\n        \"streetSocr\": null,\n        \"country\": \"РОССИЯ\",\n        \"countryCode\": \"643\",\n        \"postIndex\": \"\",\n        \"okato\": null\n    },\n    \"ageParams\": {\n        \"age\": 0,\n        \"ageTitle\": 0,\n        \"birthDate\": \"1900-01-01T00:00:00.000\",\n        \"ageGroup\": {\n            \"id\": 2,\n            \"state\": 0,\n            \"name\": \"Взрослые\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": \"1\",\n            \"guid\": \"5a74064f-9c79-45de-ae94-2b82fc674cb7\",\n            \"isNew\": false\n        },\n        \"isChild\": false\n    },\n    \"beginSheduller\": \"1900-01-01T00:00:00.000\",\n    \"callCancelReason\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"callDoctorHistory\": [],\n    \"callFamily\": \"\",\n    \"callName\": \"\",\n    \"callPatronymic\": \"\",\n    \"callPersonType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"causeCancel\": \"\",\n    \"codeDomophon\": \"\",\n    \"complaint\": \"диатез\",\n    \"createDate\": \"2021-08-26T16:25:06.296\",\n    \"dateActive\": \"1900-01-01T00:00:00.000\",\n    \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n    \"dateResolved\": \"1900-01-01T00:00:00.000\",\n    \"dateStatus\": \"1900-01-01T00:00:00.000\",\n    \"description\": \"\",\n    \"doctorCalled\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"person\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"department\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"departmentType\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"lpu\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            }\n        },\n        \"mo\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"ogrn\": \"\",\n            \"code\": \"\",\n            \"codeMo\": 0,\n            \"filialCode\": \"\",\n            \"fullName\": \"\",\n            \"name\": \"\",\n            \"phone\": \"\",\n            \"fax\": \"\",\n            \"email\": \"\",\n            \"address\": \"\",\n            \"license\": \"\",\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"okato\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"okpo\": \"\"\n        },\n        \"post\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\"\n        },\n        \"speciality\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\"\n        },\n        \"room\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\"\n        },\n        \"uchastoks\": [],\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 0,\n        \"isSpecial\": 0,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"guidTypeMetaData\": \"00000000-0000-0000-0000-000000000000\",\n        \"doctor\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"isConclusion\": false\n    },\n    \"doctorPerform\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"person\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"department\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"departmentType\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"lpu\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            }\n        },\n        \"mo\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"ogrn\": \"\",\n            \"code\": \"\",\n            \"codeMo\": 0,\n            \"filialCode\": \"\",\n            \"fullName\": \"\",\n            \"name\": \"\",\n            \"phone\": \"\",\n            \"fax\": \"\",\n            \"email\": \"\",\n            \"address\": \"\",\n            \"license\": \"\",\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"okato\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"okpo\": \"\"\n        },\n        \"post\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\"\n        },\n        \"speciality\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\"\n        },\n        \"room\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\"\n        },\n        \"uchastoks\": [],\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 0,\n        \"isSpecial\": 0,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"guidTypeMetaData\": \"00000000-0000-0000-0000-000000000000\",\n        \"doctor\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"isConclusion\": false\n    },\n    \"endSheduller\": \"1900-01-01T00:00:00.000\",\n    \"entrance\": 0,\n    \"family\": \"екек\",\n    \"floor\": 0,\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"id\": {{callId}},\n    \"isFinalize\": false,\n    \"isNotification\": false,\n    \"lpu\": {\n        \"id\": {{lpuid}},\n        \"guid\": \"1dadf64c-f34a-4023-98a6-3e7b7be4f243\",\n        \"state\": \"Read\"\n    },\n    \"mkabId\": 0,\n    \"name\": \"е\",\n    \"patronymic\": \"ек\",\n    \"phone\": \"71111111111\",\n    \"policyNumber\": \"\",\n    \"policySeries\": \"\",\n    \"possibleUchastoks\": [],\n    \"sex\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"source\": {\n        \"name\": \"Регистратура\",\n        \"code\": \"5\",\n        \"id\": 5,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"sourceSmp\": \"\",\n    \"status\": {\n        \"guid\": \"a290ef23-8127-4d78-8c9a-81bce4126946\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"name\": \"Новый\",\n        \"code\": \"0\",\n        \"id\": 5,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"tapId\": 0,\n    \"typeCallDoctor\": {\n        \"name\": \"Первичный\",\n        \"code\": \"1\",\n        \"id\": 2,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"uchastok\": {\n        \"id\": 257,\n        \"state\": 0,\n        \"name\": \"6-й Педиатрический\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": \"6-Пед \",\n        \"guid\": \"f1ddb6b5-a1b0-459f-83f5-d194675ff616\",\n        \"docPrvdId\": 1727,\n        \"medicalResource\": {\n            \"name\": \"Ю***\",\n            \"family\": \"К**********\",\n            \"patronymic\": \"В***********\",\n            \"phone\": \"9205672002\",\n            \"code\": \"810\",\n            \"guid\": \"3d0657f8-cc9e-4882-bc63-e68da95f5f7f\",\n            \"id\": 2981,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"isNew\": false\n    },\n    \"visitDate\": \"2021-08-26T16:24:30.272\",\n    \"version\": 1,\n    \"isSentToDoctor\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/Uchastok",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"Uchastok"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Перенаправление в другое ЛПУ.",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": {{callId}},\n  \"state\": 0,\n  \"guid\": \"7d9db0f4-5e5c-4b05-8a0e-30528e2d5bc6\",\n  \"address\": {\n    \"id\": 1000044923,\n    \"addressString\": \"Мурманская обл, г Мурманск, пр-кт Ленина, д 11А, кв 12\",\n    \"fiasGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"fiasCityGuid\": \"b7127184-ead6-422b-b7cf-4fc7725b47a5\",\n    \"fiasStreetGuid\": \"e337956b-52b1-4c4f-b25d-996d39d9bb42\",\n    \"fiasHouseGuid\": \"d255b111-fd4b-46bf-9950-151b06888242\",\n    \"kladrCode\": \"5100000100000790001\",\n    \"postIndex\": \"183032\",\n    \"okato\": \"47401000000\",\n    \"oktmo\": \"47701000001\",\n    \"codeIfns\": \"5100\",\n    \"codeIfnsLegal\": \"5100\",\n    \"countryId\": 184,\n    \"country\": \"РОССИЯ\",\n    \"region\": \"Мурманская обл\",\n    \"area\": \"\",\n    \"city\": \"г Мурманск\",\n    \"settlement\": \"\",\n    \"street\": \"пр-кт Ленина\",\n    \"house\": \"11А\",\n    \"block\": \"\",\n    \"construction\": \"\",\n    \"flat\": \"12\"\n  },\n  \"uchastok\": {\n    \"id\": 0,\n    \"state\": 0,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": null,\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"isNew\": true\n  },\n  \"possibleUchastoks\": [],\n  \"version\": 1,\n  \"ageParams\": {\n    \"age\": 28,\n    \"ageTitle\": 3,\n    \"birthDate\": \"1995-12-19T00:00:00.000\",\n    \"ageGroup\": {\n      \"id\": 3,\n      \"state\": 0,\n      \"name\": \"Взрослые\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": \"1\",\n      \"guid\": \"df9171a8-610c-459a-98ed-61ceefa277d2\",\n      \"isNew\": false\n    },\n    \"isChild\": false\n  },\n  \"callDoctorHistory\": [\n    {\n      \"changeElement\": \"\",\n      \"date\": \"{{dateSheduler}}T10:01:31.633\",\n      \"guid\": \"f6a2bc28-fcb1-4e16-ace0-3abe2304497c\",\n      \"id\": 117004,\n      \"editor\": \"Постман Врач Тестовый\",\n      \"newValue\": \"\",\n      \"oldValue\": \"\",\n      \"isNew\": false,\n      \"state\": 0\n    }\n  ],\n  \"callFamily\": \"Постман\",\n  \"callName\": \"Пациент\",\n  \"callPatronymic\": \"Коллекционный\",\n  \"callPersonType\": {\n    \"id\": 1,\n    \"state\": 0,\n    \"name\": \"Пациент\",\n    \"guid\": \"e010b8a6-f629-4040-95e3-b4db7b162b48\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"causeCancel\": \"\",\n  \"codeDomophon\": \"\",\n  \"complaint\": \"температура\",\n  \"createDate\": \"{{dateSheduler}}T00:24:28.467\",\n  \"dateActive\": \"1900-01-01T00:00:00.000\",\n  \"dateResolved\": \"1900-01-01T00:00:00.000\",\n  \"doctorCalled\": {\n    \"id\": 0,\n    \"state\": 0,\n    \"name\": \"не определено\",\n    \"begin\": \"1800-04-05T00:00:00.000\",\n    \"end\": \"1800-04-05T00:00:00.000\",\n    \"code\": \"\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"person\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"phone\": \"\",\n      \"code\": \"\",\n      \"isNew\": true\n    },\n    \"department\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": null,\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"isNew\": true\n    },\n    \"mo\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": null,\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"code\": null,\n        \"isNew\": true\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\",\n      \"isNew\": true\n    },\n    \"post\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"isNew\": true\n    },\n    \"speciality\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"code\": null,\n      \"isNew\": true\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"isNew\": true\n    },\n    \"uchastoks\": null,\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 0,\n    \"isSpecial\": 0,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false,\n    \"loadingToday\": -1,\n    \"loadingTomorrow\": -1,\n    \"worcToDayBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcToDayEnd\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowEnd\": \"1900-01-01T00:00:00.000\",\n    \"isNew\": true\n  },\n  \"doctorPerform\": {\n    \"id\": 0,\n    \"state\": 0,\n    \"name\": \"не определено\",\n    \"begin\": \"1800-04-05T00:00:00.000\",\n    \"end\": \"1800-04-05T00:00:00.000\",\n    \"code\": \"\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"person\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"phone\": \"\",\n      \"code\": \"\",\n      \"isNew\": true\n    },\n    \"department\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"code\": null,\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"departmentType\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"lpu\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"oid\": \"\"\n      },\n      \"mo\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"isNew\": true\n    },\n    \"mo\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"ogrn\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"code\": null,\n      \"codeMo\": 0,\n      \"filialCode\": \"\",\n      \"fullName\": \"\",\n      \"name\": \"\",\n      \"phone\": \"\",\n      \"fax\": \"\",\n      \"email\": \"\",\n      \"address\": \"\",\n      \"license\": \"\",\n      \"mainMo\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"code\": null,\n        \"isNew\": true\n      },\n      \"okato\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\"\n      },\n      \"begin\": \"1900-01-01T00:00:00.000\",\n      \"end\": \"2222-01-01T00:00:00.000\",\n      \"okpo\": \"\",\n      \"isNew\": true\n    },\n    \"post\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"isNew\": true\n    },\n    \"speciality\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"code\": null,\n      \"isNew\": true\n    },\n    \"departmentProfile\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\"\n    },\n    \"room\": {\n      \"id\": 0,\n      \"state\": 0,\n      \"name\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"isNew\": true\n    },\n    \"uchastoks\": null,\n    \"nomServiceCode\": \"\",\n    \"resourceType\": 0,\n    \"inTime\": 0,\n    \"isSpecial\": 0,\n    \"hasSchedule\": false,\n    \"mainWorkPlace\": false,\n    \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n    \"doctor\": {\n      \"id\": 0,\n      \"state\": 1,\n      \"name\": \"\",\n      \"family\": \"\",\n      \"patronymic\": \"\",\n      \"setView\": \"\",\n      \"guid\": \"00000000-0000-0000-0000-000000000000\",\n      \"speciality\": {\n        \"id\": 0,\n        \"state\": 1,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    },\n    \"isConclusion\": false,\n    \"loadingToday\": -1,\n    \"loadingTomorrow\": -1,\n    \"worcToDayBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcToDayEnd\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowBegin\": \"1900-01-01T00:00:00.000\",\n    \"worcTomorrowEnd\": \"1900-01-01T00:00:00.000\",\n    \"isNew\": true\n  },\n  \"entrance\": 0,\n  \"family\": \"Постман\",\n  \"floor\": 0,\n  \"isNotification\": false,\n  \"lpu\": {\n    \"hostId\": 0,\n    \"mainMo\": 24150,\n    \"medOrganizations\": null,\n    \"address\": \"г. Москва\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"count\": 0,\n    \"guid\": \"07ab9b52-3208-448b-bc84-507441191fa3\",\n    \"name\": \"СТ (Стенд ЕМИАС МО) Аптека\",\n    \"code\": \"77777799  \",\n    \"id\": 30412,\n    \"isNew\": false,\n    \"state\": 0\n  },\n  \"name\": \"Пациент\",\n  \"patronymic\": \"Коллекционный\",\n  \"phone\": \"79621149072\",\n  \"policyNumber\": \"5611989102373945\",\n  \"policySeries\": \"\",\n  \"sex\": {\n    \"id\": 3,\n    \"state\": 0,\n    \"name\": \"Мужской\",\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"source\": {\n    \"id\": 1017,\n    \"state\": 0,\n    \"name\": \"Регистратура\",\n    \"code\": \"Registry\",\n    \"isNew\": false\n  },\n  \"sourceSmp\": \"\",\n  \"status\": {\n    \"guid\": \"7d17ffcf-1f1b-4d55-8308-e64669f36817\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"name\": \"Передан в другую МО\",\n    \"code\": \"4\",\n    \"id\": 6,\n    \"isNew\": false,\n    \"state\": 0\n  },\n  \"visitDate\": \"{{dateSheduler}}\",\n  \"isFinalize\": false,\n  \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n  \"dateStatus\": \"1900-01-01T00:00:00.000\",\n  \"mkabId\": 2778657,\n  \"tapId\": 0,\n  \"typeCallDoctor\": {\n    \"id\": 2,\n    \"state\": 0,\n    \"name\": \"Первичный\",\n    \"code\": \"1\",\n    \"isNew\": false\n  },\n  \"beginSheduller\": \"1900-01-01T00:00:00.000\",\n  \"endSheduller\": \"1900-01-01T00:00:00.000\",\n  \"callCancelReason\": {\n    \"id\": 0,\n    \"state\": 0,\n    \"name\": \"\",\n    \"begin\": \"1900-01-01T00:00:00.000\",\n    \"end\": \"2222-01-01T00:00:00.000\",\n    \"code\": null,\n    \"guid\": \"00000000-0000-0000-0000-000000000000\",\n    \"isNew\": true\n  },\n  \"isSentToDoctor\": false,\n  \"description\": \"\",\n  \"mkb\": {\n    \"name\": \"\",\n    \"code\": null,\n    \"id\": 0,\n    \"isNew\": true,\n    \"state\": 0\n  },\n  \"isNew\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor/redirect-lpu/{{mcodMainLpu}}/{{mcodLpu}}",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor",
+										"redirect-lpu",
+										"{{mcodMainLpu}}",
+										"{{mcodLpu}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Отмена вызова.",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": {{callId}},\n    \"state\": 0,\n    \"guid\": \"6ab6e161-d2f2-49f0-9fda-8e5a32a5fdce\",\n    \"address\": {\n        \"localitySocr\": null,\n        \"locality\": null,\n        \"citySocr\": null,\n        \"city\": null,\n        \"regionSocr\": null,\n        \"region\": null,\n        \"areaSocr\": \"г\",\n        \"area\": \"Москва\",\n        \"flags\": 0,\n        \"isCity\": false,\n        \"appartment\": \"1\",\n        \"construction\": \"\",\n        \"building\": \"\",\n        \"number\": \"122\",\n        \"dopData\": \"\",\n        \"addressStringMin\": \"г. Москва, ул. Лубянка Б.\",\n        \"addressString\": \"г. Москва, ул. Лубянка Б., д.122, кв.1\",\n        \"code\": \"77000000000701800\",\n        \"addressId\": 1000052132,\n        \"street\": \"Большая Лубянка\",\n        \"streetSocr\": \"ул\",\n        \"country\": \"РОССИЯ\",\n        \"countryCode\": \"643\",\n        \"postIndex\": \"\",\n        \"okato\": \"45286565000\"\n    },\n    \"uchastok\": {\n        \"id\": 355,\n        \"state\": 0,\n        \"name\": \"Терапевтический\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": \"251   \",\n        \"guid\": \"361a989d-ea16-4b8b-810d-05ea246cb037\",\n        \"docPrvdId\": 333,\n        \"medicalResource\": {\n            \"name\": \"Петр\",\n            \"family\": \"Иванов\",\n            \"patronymic\": \"Сергеевич\",\n            \"phone\": \"88005553535\",\n            \"code\": \"911\",\n            \"guid\": \"61adc18b-8d3a-48c9-9cc7-5bb9ab102d3c\",\n            \"id\": 1870,\n            \"isNew\": false,\n            \"state\": 0\n        },\n        \"isNew\": false\n    },\n    \"possibleUchastoks\": [],\n    \"version\": 1,\n    \"ageParams\": {\n        \"age\": 17,\n        \"ageTitle\": 3,\n        \"birthDate\": \"2003-09-10T00:00:00.000\",\n        \"ageGroup\": {\n            \"id\": 3,\n            \"state\": 0,\n            \"name\": \"Дети\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": \"2\",\n            \"guid\": \"eceb7af3-81d3-47b8-b2fe-781c6f77acf9\",\n            \"isNew\": false\n        },\n        \"isChild\": true\n    },\n    \"callDoctorHistory\": [\n        {\n            \"changeElement\": \"\",\n            \"date\": \"2021-08-26T15:50:29.667\",\n            \"guid\": \"b1c93cf7-cbcd-4944-a75b-3dbe4246e387\",\n            \"id\": 196771,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"\",\n            \"oldValue\": \"\",\n            \"isNew\": false,\n            \"state\": 0\n        },\n        {\n            \"changeElement\": \"Статус\",\n            \"date\": \"2021-08-26T15:56:19.827\",\n            \"guid\": \"9cfe7c1d-51e2-4077-9991-1c010d23a99d\",\n            \"id\": 196772,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"Активный\",\n            \"oldValue\": \"Новый\",\n            \"isNew\": false,\n            \"state\": 0\n        },\n        {\n            \"changeElement\": \"Дата перевода в статус активный\",\n            \"date\": \"2021-08-26T15:56:19.827\",\n            \"guid\": \"e49e07a2-2a18-47f0-96e6-69c6cace4c67\",\n            \"id\": 196773,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"26.08.2021 15:56\",\n            \"oldValue\": \"\",\n            \"isNew\": false,\n            \"state\": 0\n        },\n        {\n            \"changeElement\": \"Назначенный врач\",\n            \"date\": \"2021-08-26T15:56:19.827\",\n            \"guid\": \"3b5bcec6-8aad-4fa6-b4a9-739b5000c74f\",\n            \"id\": 196774,\n            \"editor\": \"Иванов Петр Сергеевич\",\n            \"newValue\": \"Быков Андрей Евгеньевич\",\n            \"oldValue\": \"не определено не определено не определено\",\n            \"isNew\": false,\n            \"state\": 0\n        }\n    ],\n    \"callFamily\": \"\",\n    \"callName\": \"\",\n    \"callPatronymic\": \"\",\n    \"callPersonType\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"code\": null,\n        \"isNew\": true\n    },\n    \"causeCancel\": \"\",\n    \"codeDomophon\": \"\",\n    \"complaint\": \"температура\",\n    \"createDate\": \"2021-08-26T15:50:29.720\",\n    \"dateActive\": \"2021-08-26T15:56:20.003\",\n    \"dateResolved\": \"1900-01-01T00:00:00.000\",\n    \"doctorCalled\": {\n        \"id\": 2198,\n        \"state\": 0,\n        \"name\": \"\",\n        \"begin\": \"1899-12-27T00:00:00.000\",\n        \"end\": \"2222-01-01T23:59:59.000\",\n        \"code\": \"2015\",\n        \"guid\": \"14911706-60ea-e911-a220-2c4d5452990f\",\n        \"person\": {\n            \"id\": 3086,\n            \"state\": 0,\n            \"name\": \"Андрей\",\n            \"family\": \"Быков\",\n            \"patronymic\": \"Евгеньевич\",\n            \"setView\": \"\",\n            \"guid\": \"969f22ff-5fea-e911-a220-2c4d5452990f\",\n            \"phone\": \"9205672002\",\n            \"code\": \"2015\",\n            \"isNew\": false\n        },\n        \"department\": {\n            \"id\": 2358,\n            \"state\": 0,\n            \"name\": \"Кабинет врача-терапевта\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": \"210\",\n            \"guid\": \"87575a5b-7800-4608-a50d-df8992b90f3e\",\n            \"departmentType\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"lpu\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"isNew\": false\n        },\n        \"mo\": {\n            \"id\": 1839,\n            \"state\": 0,\n            \"ogrn\": \"\",\n            \"code\": \"Поликлиника (ГБУЗ МО \\\"Талдомская ЦРБ\\\")\",\n            \"codeMo\": 0,\n            \"filialCode\": \"\",\n            \"fullName\": \"\",\n            \"name\": \"Поликлиника (ГБУЗ МО \\\"Талдомская ЦРБ\\\")\",\n            \"phone\": \"\",\n            \"fax\": \"\",\n            \"email\": \"\",\n            \"address\": \"\",\n            \"license\": \"\",\n            \"mainMo\": {\n                \"id\": 1838,\n                \"state\": 0,\n                \"name\": \"ГБУЗ МО Талдомская ЦРБ TEST\",\n                \"code\": \"470101    \",\n                \"isNew\": false\n            },\n            \"okato\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"okpo\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"isNew\": false\n        },\n        \"post\": {\n            \"id\": 1846,\n            \"state\": 0,\n            \"name\": \"Онкологи\",\n            \"isNew\": false\n        },\n        \"speciality\": {\n            \"id\": 1965,\n            \"state\": 0,\n            \"name\": \"Онкология\",\n            \"code\": \"41\",\n            \"isNew\": false\n        },\n        \"room\": {\n            \"id\": 468,\n            \"state\": 0,\n            \"name\": \"216\",\n            \"guid\": \"accc99bd-6fd3-486a-ab77-6bc7944a0f28\",\n            \"isNew\": false\n        },\n        \"uchastoks\": [\n            {\n                \"id\": 236,\n                \"state\": 0,\n                \"name\": \"3-й Терапевтический\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"3-Тер \",\n                \"guid\": \"2f34f7a9-5f70-4bfd-b2b8-ecaa5a1b8d22\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            }\n        ],\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 1,\n        \"isSpecial\": 1,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n        \"doctor\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"isConclusion\": false,\n        \"loadingToday\": -1,\n        \"loadingTomorrow\": -1,\n        \"worcToDayBegin\": \"1900-01-01T00:00:00\",\n        \"worcToDayEnd\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowBegin\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowEnd\": \"1900-01-01T00:00:00\",\n        \"isNew\": false\n    },\n    \"doctorPerform\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"не определено\",\n        \"begin\": \"1800-04-05T00:00:00.000\",\n        \"end\": \"1800-04-05T00:00:00.000\",\n        \"code\": \"\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"person\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"phone\": \"\",\n            \"code\": \"\",\n            \"isNew\": true\n        },\n        \"department\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"code\": null,\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"departmentType\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"lpu\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"guid\": \"00000000-0000-0000-0000-000000000000\"\n            },\n            \"isNew\": true\n        },\n        \"mo\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"ogrn\": \"\",\n            \"code\": null,\n            \"codeMo\": 0,\n            \"filialCode\": \"\",\n            \"fullName\": \"\",\n            \"name\": \"\",\n            \"phone\": \"\",\n            \"fax\": \"\",\n            \"email\": \"\",\n            \"address\": \"\",\n            \"license\": \"\",\n            \"mainMo\": {\n                \"id\": 0,\n                \"state\": 0,\n                \"name\": \"\",\n                \"code\": null,\n                \"isNew\": true\n            },\n            \"okato\": {\n                \"id\": 0,\n                \"state\": 1,\n                \"name\": \"\"\n            },\n            \"begin\": \"1900-01-01T00:00:00.000\",\n            \"end\": \"2222-01-01T00:00:00.000\",\n            \"okpo\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"isNew\": true\n        },\n        \"post\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"isNew\": true\n        },\n        \"speciality\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"code\": null,\n            \"isNew\": true\n        },\n        \"room\": {\n            \"id\": 0,\n            \"state\": 0,\n            \"name\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\",\n            \"isNew\": true\n        },\n        \"uchastoks\": [\n            {\n                \"id\": 0,\n                \"state\": 0,\n                \"name\": \"не определено\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"      \",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": true\n            },\n            {\n                \"id\": 272,\n                \"state\": 0,\n                \"name\": \"Тестовый очистка\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"test1 \",\n                \"guid\": \"dc1ca63a-09a7-e911-a21d-2c4d5452990f\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 345,\n                \"state\": 0,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2021-07-07T14:36:14.153\",\n                \"code\": \"      \",\n                \"guid\": \"b87e5cf0-92dc-4da2-bfd9-457bd677b3d0\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 346,\n                \"state\": 0,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2021-07-07T16:39:58.893\",\n                \"code\": \"      \",\n                \"guid\": \"5d80be6a-9085-4e14-b18d-2068216c8387\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 348,\n                \"state\": 0,\n                \"name\": \"\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2021-07-07T16:39:53.407\",\n                \"code\": \"      \",\n                \"guid\": \"e34ce09b-16ae-4e11-aa9e-496b0838d4f0\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            },\n            {\n                \"id\": 361,\n                \"state\": 0,\n                \"name\": \"не определено\",\n                \"begin\": \"1900-01-01T00:00:00.000\",\n                \"end\": \"2222-01-01T00:00:00.000\",\n                \"code\": \"      \",\n                \"guid\": \"00000000-0000-0000-0000-000000000000\",\n                \"docPrvdId\": 0,\n                \"medicalResource\": null,\n                \"isNew\": false\n            }\n        ],\n        \"nomServiceCode\": \"\",\n        \"resourceType\": 0,\n        \"inTime\": 0,\n        \"isSpecial\": 0,\n        \"hasSchedule\": false,\n        \"mainWorkPlace\": false,\n        \"guidTypeMetaData\": \"81d86a3b-2c5a-44b0-8ef9-48e34fbce21d\",\n        \"doctor\": {\n            \"id\": 0,\n            \"state\": 1,\n            \"name\": \"\",\n            \"family\": \"\",\n            \"patronymic\": \"\",\n            \"setView\": \"\",\n            \"guid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        \"isConclusion\": false,\n        \"loadingToday\": -1,\n        \"loadingTomorrow\": -1,\n        \"worcToDayBegin\": \"1900-01-01T00:00:00\",\n        \"worcToDayEnd\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowBegin\": \"1900-01-01T00:00:00\",\n        \"worcTomorrowEnd\": \"1900-01-01T00:00:00\",\n        \"isNew\": true\n    },\n    \"entrance\": 0,\n    \"family\": \"Тест\",\n    \"floor\": 0,\n    \"isNotification\": false,\n    \"lpu\": {\n        \"hostId\": 0,\n        \"mainMo\": 3736,\n        \"medOrganizations\": null,\n        \"address\": \"Московская обл., Талдомский р-н., рп. Северный, ул. Центральная, д.4\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"count\": 0,\n        \"guid\": \"e16eabc7-77df-4915-b519-58816cde4028\",\n        \"name\": \"Амбулатория пос.Северный\",\n        \"code\": \"470107    \",\n        \"id\": 25384,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"name\": \"Направления\",\n    \"patronymic\": \"Вдиспе\",\n    \"phone\": \"79033517794\",\n    \"policyNumber\": \"65465465465456\",\n    \"policySeries\": \"343434\",\n    \"sex\": {\n        \"id\": 3,\n        \"state\": 0,\n        \"name\": \"Женский\",\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"code\": \"2\",\n        \"isNew\": false\n    },\n    \"source\": {\n        \"id\": 5,\n        \"state\": 0,\n        \"name\": \"Регистратура\",\n        \"code\": \"5\",\n        \"isNew\": false\n    },\n    \"sourceSmp\": \"\",\n    \"status\": {\n        \"guid\": \"7d17ffcf-1f1b-4d55-8308-e64669f36817\",\n        \"begin\": \"1900-01-01T00:00:00\",\n        \"end\": \"2222-01-01T00:00:00\",\n        \"name\": \"Передан в другую МО\",\n        \"code\": \"4\",\n        \"id\": 6,\n        \"isNew\": false,\n        \"state\": 0\n    },\n    \"visitDate\": \"2021-08-26T21:00:00.000\",\n    \"isFinalize\": false,\n    \"dateFinalize\": \"1900-01-01T00:00:00.000\",\n    \"dateStatus\": \"2021-08-26T15:56:20.003\",\n    \"mkabId\": 2662405,\n    \"tapId\": 0,\n    \"typeCallDoctor\": {\n        \"id\": 2,\n        \"state\": 0,\n        \"name\": \"Первичный\",\n        \"code\": \"1\",\n        \"isNew\": false\n    },\n    \"beginSheduller\": \"2021-08-26T21:00:00.000\",\n    \"endSheduller\": \"2021-08-26T23:00:00.000\",\n    \"callCancelReason\": {\n        \"id\": 0,\n        \"state\": 0,\n        \"name\": \"\",\n        \"begin\": \"1900-01-01T00:00:00.000\",\n        \"end\": \"2222-01-01T00:00:00.000\",\n        \"code\": null,\n        \"guid\": \"00000000-0000-0000-0000-000000000000\",\n        \"isNew\": true\n    },\n    \"isSentToDoctor\": true,\n    \"description\": \"\",\n    \"mkb\": {\n        \"name\": \"\",\n        \"code\": null,\n        \"id\": 0,\n        \"isNew\": true,\n        \"state\": 0\n    },\n    \"isNew\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}callhome/api/CallDoctor/call-cancel",
+									"host": [
+										"{{baseUrl}}callhome"
+									],
+									"path": [
+										"api",
+										"CallDoctor",
+										"call-cancel"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Получение списка полных карт вызовов.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"{\\\"where\\\":{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operatorType\\\":1,\\\"operands\\\":[{\\\"field\\\":\\\"Status.Code\\\",\\\"filterType\\\":1,\\\"value\\\":\\\"0\\\",\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operatorType\\\":2,\\\"operands\\\":[{\\\"field\\\":\\\"Lpu.Id\\\",\\\"filterType\\\":1,\\\"value\\\":1839,\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":\\\"Lpu.MainMoId\\\",\\\"filterType\\\":1,\\\"value\\\":1839,\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":\\\"Lpu.Id\\\",\\\"filterType\\\":1,\\\"value\\\":1838,\\\"operatorType\\\":0,\\\"operands\\\":null}]}]},\\\"orderBy\\\":[{\\\"field\\\":\\\"CreateDate\\\",\\\"order\\\":0}],\\\"take\\\":10,\\\"skip\\\":0}\"",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/CallDoctor/getAll?type=1&=&progressInterval=20&=&almostOverdueInterval=30&=&progressIntervalSMP=0&=&almostOverdueIntervalSMP=0&=&isNoKladr=true",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"CallDoctor",
+								"getAll"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "1",
+									"description": "Тип вызовов по дате."
+								},
+								{
+									"key": null,
+									"value": ""
+								},
+								{
+									"key": "progressInterval",
+									"value": "20",
+									"description": "Интервал для активных."
+								},
+								{
+									"key": null,
+									"value": ""
+								},
+								{
+									"key": "almostOverdueInterval",
+									"value": "30",
+									"description": "Интервал для почти просроченных."
+								},
+								{
+									"key": null,
+									"value": ""
+								},
+								{
+									"key": "progressIntervalSMP",
+									"value": "0"
+								},
+								{
+									"key": null,
+									"value": ""
+								},
+								{
+									"key": "almostOverdueIntervalSMP",
+									"value": "0"
+								},
+								{
+									"key": null,
+									"value": ""
+								},
+								{
+									"key": "isNoKladr",
+									"value": "true",
+									"description": "Признак получения адреса без КЛАДР."
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "key",
+						"value": "Ticket",
+						"type": "string"
+					},
+					{
+						"key": "value",
+						"value": "{{modemoTicket}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.collectionVariables.set(\"callDoctorMkabId\",2778657);",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"статус 200\", function () {",
+							"     pm.response.to.be.ok;",
+							"});",
+							"pm.test(\"тело ответа содержит json\", function () {",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							"pm.test(\"нет ошибок\", function () {",
+							"     pm.expect(responseJson.errors).to.eql(null);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Doctor Card",
+			"item": [
+				{
+					"name": "Получение кол-ва карт по фильтру.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"{\\\"where\\\":{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operatorType\\\":1,\\\"operands\\\":[{\\\"field\\\":\\\"Status.Code\\\",\\\"filterType\\\":1,\\\"value\\\":\\\"0\\\",\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operatorType\\\":2,\\\"operands\\\":[{\\\"field\\\":\\\"Lpu.Id\\\",\\\"filterType\\\":1,\\\"value\\\":{{lpuid}},\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":\\\"Lpu.MainMoId\\\",\\\"filterType\\\":1,\\\"value\\\":{{lpuid}},\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":\\\"Lpu.Id\\\",\\\"filterType\\\":1,\\\"value\\\":{{lpuid}},\\\"operatorType\\\":0,\\\"operands\\\":null}]}]},\\\"orderBy\\\":[{\\\"field\\\":\\\"CreateDate\\\",\\\"order\\\":1}],\\\"take\\\":0,\\\"skip\\\":0}\"\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/DoctorCard/Count?progressInterval=20&=&almostOverdueInterval=30&=&progressIntervalSMP=0&=&almostOverdueIntervalSMP=0",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"DoctorCard",
+								"Count"
+							],
+							"query": [
+								{
+									"key": "progressInterval",
+									"value": "20",
+									"description": "Интервал для активных."
+								},
+								{
+									"key": "",
+									"value": ""
+								},
+								{
+									"key": "almostOverdueInterval",
+									"value": "30",
+									"description": "Интервал для почти просроченных."
+								},
+								{
+									"key": "",
+									"value": ""
+								},
+								{
+									"key": "progressIntervalSMP",
+									"value": "0"
+								},
+								{
+									"key": "",
+									"value": ""
+								},
+								{
+									"key": "almostOverdueIntervalSMP",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение кол-ва карт по врачам по фильтру.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"{\\\"where\\\":{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operatorType\\\":1,\\\"operands\\\":[{\\\"field\\\":\\\"Status.Code\\\",\\\"filterType\\\":1,\\\"value\\\":\\\"1\\\",\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operatorType\\\":2,\\\"operands\\\":[{\\\"field\\\":\\\"Lpu.Id\\\",\\\"filterType\\\":1,\\\"value\\\":{{lpuid}},\\\"operatorType\\\":0,\\\"operands\\\":null},{\\\"field\\\":\\\"Lpu.MainMoId\\\",\\\"filterType\\\":1,\\\"value\\\":{{lpuid}},\\\"operatorType\\\":0,\\\"operands\\\":null}]}]},\\\"orderBy\\\":[{\\\"field\\\":\\\"CreateDate\\\",\\\"order\\\":0}],\\\"take\\\":0,\\\"skip\\\":0}\""
+						},
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/DoctorCard/GetAll/?progressInterval=1320&=&almostOverdueInterval=1440&=&progressIntervalSMP=30&=&almostOverdueIntervalSMP=120",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"DoctorCard",
+								"GetAll",
+								""
+							],
+							"query": [
+								{
+									"key": "progressInterval",
+									"value": "1320",
+									"description": "Интервал для активных."
+								},
+								{
+									"key": "",
+									"value": ""
+								},
+								{
+									"key": "almostOverdueInterval",
+									"value": "1440",
+									"description": "Интервал для почти просроченных."
+								},
+								{
+									"key": "",
+									"value": ""
+								},
+								{
+									"key": "progressIntervalSMP",
+									"value": "30"
+								},
+								{
+									"key": "",
+									"value": ""
+								},
+								{
+									"key": "almostOverdueIntervalSMP",
+									"value": "120"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lpu",
+			"item": [
+				{
+					"name": "Получение объекта по фильтру",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/Lpu?filter={\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Code\",\"filterType\":2,\"value\":\"{{mcodMainLpu}}\",\"operatorType\":0,\"operands\":null},{\"field\":\"Begin\",\"filterType\":5,\"value\":\"{{dateSheduler}}T16:12:34.931\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"{{dateSheduler}}T16:12:34.931\",\"operatorType\":0,\"operands\":null},{\"field\":\"Name\",\"filterType\":7,\"value\":\"\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":9,\"skip\":0}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"Lpu"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Code\",\"filterType\":2,\"value\":\"{{mcodMainLpu}}\",\"operatorType\":0,\"operands\":null},{\"field\":\"Begin\",\"filterType\":5,\"value\":\"{{dateSheduler}}T16:12:34.931\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"{{dateSheduler}}T16:12:34.931\",\"operatorType\":0,\"operands\":null},{\"field\":\"Name\",\"filterType\":7,\"value\":\"\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":9,\"skip\":0}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение объекта по внутреннему идентификатору.",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Проверка получения ЛПУ\", function () {\r",
+									"     const responseJson = pm.response.json();\r",
+									"     pm.expect(responseJson.data.id).to.eql(4306)\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/Lpu/{{LPUDoctorID}}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"Lpu",
+								"{{LPUDoctorID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение списка ЛПУ локальной базы, в которых есть расписание.",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/Lpu/find?mainLpuId={{lpuid}}&ageGroupCode=1&filter={\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Code\",\"filterType\":2,\"value\":\"{{mcodMainLpu}} \",\"operatorType\":0,\"operands\":null},{\"field\":\"Begin\",\"filterType\":5,\"value\":\"{{dateSheduler}}T09:44:27.579\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"{{dateSheduler}}T09:44:27.579\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":9,\"skip\":0}&isNeedCount=true&={{dateSheduler}}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"Lpu",
+								"find"
+							],
+							"query": [
+								{
+									"key": "mainLpuId",
+									"value": "{{lpuid}}",
+									"description": "Идентификатор головного ЛПУ."
+								},
+								{
+									"key": "ageGroupCode",
+									"value": "1",
+									"description": "Код возрастной группы."
+								},
+								{
+									"key": "filter",
+									"value": "{\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Code\",\"filterType\":2,\"value\":\"{{mcodMainLpu}} \",\"operatorType\":0,\"operands\":null},{\"field\":\"Begin\",\"filterType\":5,\"value\":\"{{dateSheduler}}T09:44:27.579\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"{{dateSheduler}}T09:44:27.579\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":9,\"skip\":0}",
+									"description": "Фильтр ЛПУ."
+								},
+								{
+									"key": "isNeedCount",
+									"value": "true",
+									"description": "Признак необходимости получения количества."
+								},
+								{
+									"key": "",
+									"value": "{{dateSheduler}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение списка других ЛПУ.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/Lpu/find-other?mainLpuId={{lpuid}}&ageGroupCode=1&filter={\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Begin\",\"filterType\":5,\"value\":\"{{dateSheduler}}T16:36:00.449\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"{{dateSheduler}}T16:36:00.449\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":0,\"skip\":0}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"Lpu",
+								"find-other"
+							],
+							"query": [
+								{
+									"key": "mainLpuId",
+									"value": "{{lpuid}}",
+									"description": "Идентификатор головного ЛПУ."
+								},
+								{
+									"key": "ageGroupCode",
+									"value": "1",
+									"description": "Код возрастной группы."
+								},
+								{
+									"key": "filter",
+									"value": "{\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Begin\",\"filterType\":5,\"value\":\"{{dateSheduler}}T16:36:00.449\",\"operatorType\":0,\"operands\":null},{\"field\":\"End\",\"filterType\":6,\"value\":\"{{dateSheduler}}T16:36:00.449\",\"operatorType\":0,\"operands\":null}]},\"orderBy\":[{\"field\":\"Name\",\"order\":0}],\"take\":0,\"skip\":0}",
+									"description": "Фильтр ЛПУ."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение списка ЛПУ по идентификатору пользователя.",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"pm.test(\"Проверка получения списка ЛПУ по пользователю\", function () {\r",
+									"     pm.expect(responseJson.data).to.lengthOf.at.least(1);\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/Lpu/byUser/1",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"Lpu",
+								"byUser",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{modemoTicket}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "Ticket",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Medical Resource",
+			"item": [
+				{
+					"name": "Получение ресурса по идентификатору.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/MedicalResource/{{DocPRVDID}}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"MedicalResource",
+								"{{DocPRVDID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение мед. ресурса по фильтру.",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"pm.collectionVariables.set(\"UchastokID\", res.data.find(doctor => doctor.person.id === 4306).uchastoks[0].id)\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  \"{\\\"where\\\":{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operatorType\\\":1,\\\"operands\\\":[{\\\"field\\\":null,\\\"filterType\\\":0,\\\"value\\\":null,\\\"operands\\\":[{\\\"field\\\":\\\"ResourceTypeId\\\",\\\"filterType\\\":1,\\\"value\\\":1,\\\"operands\\\":null,\\\"operatorType\\\":0}],\\\"operatorType\\\":2},{\\\"field\\\":\\\"Id\\\",\\\"filterType\\\":2,\\\"value\\\":0,\\\"operands\\\":null,\\\"operatorType\\\":0},{\\\"field\\\":\\\"ageGroup\\\",\\\"filterType\\\":1,\\\"value\\\":\\\"1\\\",\\\"operands\\\":null,\\\"operatorType\\\":0}]},\\\"orderBy\\\":[{\\\"field\\\":\\\"Person.Family\\\",\\\"order\\\":0},{\\\"field\\\":\\\"Person.Name\\\",\\\"order\\\":0},{\\\"field\\\":\\\"Person.Patronymic\\\",\\\"order\\\":0}],\\\"take\\\":5,\\\"skip\\\":0}\",\n  \"{\\\"where\\\":{\\\"field\\\":null,\\\"filterType\\\":0,\\\"operands\\\":[{\\\"field\\\":\\\"KlTypeU.AllowAdult\\\",\\\"filterType\\\":1,\\\"operands\\\":null,\\\"operatorType\\\":0,\\\"value\\\":1},{\\\"field\\\":\\\"KlTypeU.AllowMen\\\",\\\"filterType\\\":1,\\\"operands\\\":null,\\\"operatorType\\\":0,\\\"value\\\":1},{\\\"field\\\":\\\"KlTypeU.IsMain\\\",\\\"filterType\\\":1,\\\"operands\\\":null,\\\"operatorType\\\":0,\\\"value\\\":1}],\\\"operatorType\\\":1,\\\"value\\\":null},\\\"orderBy\\\":[],\\\"take\\\":0,\\\"skip\\\":0}\"\n]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/MedicalResource/all/0/false",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"MedicalResource",
+								"all",
+								"0",
+								"false"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение ресурса по фильтру.",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json()\r",
+									"pm.test(\"Нашёлся хотя бы один ресурс\", function () {\r",
+									"    pm.expect(res.data).to.be.above(0);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/MedicalResource/count/{{UchastokID}}?filter={\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":2,\"operands\":[{\"field\":\"DepartmentBase.MedOrganization.Id\",\"filterType\":1,\"value\":{{lpuid}},\"operatorType\":0,\"operands\":null},{\"field\":\"DepartmentBase.MedOrganization.MainMoId\",\"filterType\":1,\"value\":{{lpuid}},\"operatorType\":0,\"operands\":null},{\"field\":\"DepartmentBase.MedOrganization.MainMoId\",\"filterType\":1,\"value\":0,\"operatorType\":0,\"operands\":null}]},{\"field\":null,\"filterType\":0,\"value\":null,\"operands\":[{\"field\":\"ResourceTypeId\",\"filterType\":1,\"value\":1,\"operands\":null,\"operatorType\":0}],\"operatorType\":2},{\"field\":\"Id\",\"filterType\":2,\"value\":0,\"operands\":null,\"operatorType\":0},{\"field\":\"ageGroup\",\"filterType\":1,\"value\":\"2\",\"operands\":null,\"operatorType\":0}]},\"orderBy\":[{\"field\":\"Person.Family\",\"order\":0},{\"field\":\"Person.Name\",\"order\":0},{\"field\":\"Person.Patronymic\",\"order\":0}],\"take\":0,\"skip\":0}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"MedicalResource",
+								"count",
+								"{{UchastokID}}"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":2,\"operands\":[{\"field\":\"DepartmentBase.MedOrganization.Id\",\"filterType\":1,\"value\":{{lpuid}},\"operatorType\":0,\"operands\":null},{\"field\":\"DepartmentBase.MedOrganization.MainMoId\",\"filterType\":1,\"value\":{{lpuid}},\"operatorType\":0,\"operands\":null},{\"field\":\"DepartmentBase.MedOrganization.MainMoId\",\"filterType\":1,\"value\":0,\"operatorType\":0,\"operands\":null}]},{\"field\":null,\"filterType\":0,\"value\":null,\"operands\":[{\"field\":\"ResourceTypeId\",\"filterType\":1,\"value\":1,\"operands\":null,\"operatorType\":0}],\"operatorType\":2},{\"field\":\"Id\",\"filterType\":2,\"value\":0,\"operands\":null,\"operatorType\":0},{\"field\":\"ageGroup\",\"filterType\":1,\"value\":\"2\",\"operands\":null,\"operatorType\":0}]},\"orderBy\":[{\"field\":\"Person.Family\",\"order\":0},{\"field\":\"Person.Name\",\"order\":0},{\"field\":\"Person.Patronymic\",\"order\":0}],\"take\":0,\"skip\":0}",
+									"description": "Флитр запроса."
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{modemoTicket}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "Ticket",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Uchastok",
+			"item": [
+				{
+					"name": "Получение участка по идентификатору.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/Uchastok/{{UchastokID}}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"Uchastok",
+								"{{UchastokID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение участка по фильтру.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}callhome/api/Uchastok/all?filter={\"where\":{\"field\":null,\"filterType\":0,\"operands\":[{\"field\":\"KlTypeU.AllowAdult\",\"filterType\":1,\"operands\":null,\"operatorType\":0,\"value\":1},{\"field\":\"KlTypeU.AllowMen\",\"filterType\":1,\"operands\":null,\"operatorType\":0,\"value\":1},{\"field\":\"KlTypeU.IsMain\",\"filterType\":1,\"operands\":null,\"operatorType\":0,\"value\":1}],\"operatorType\":1,\"value\":null},\"orderBy\":[],\"take\":0,\"skip\":0}",
+							"host": [
+								"{{baseUrl}}callhome"
+							],
+							"path": [
+								"api",
+								"Uchastok",
+								"all"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"where\":{\"field\":null,\"filterType\":0,\"operands\":[{\"field\":\"KlTypeU.AllowAdult\",\"filterType\":1,\"operands\":null,\"operatorType\":0,\"value\":1},{\"field\":\"KlTypeU.AllowMen\",\"filterType\":1,\"operands\":null,\"operatorType\":0,\"value\":1},{\"field\":\"KlTypeU.IsMain\",\"filterType\":1,\"operands\":null,\"operatorType\":0,\"value\":1}],\"operatorType\":1,\"value\":null},\"orderBy\":[],\"take\":0,\"skip\":0}",
+									"description": "Фильтр запроса."
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{modemoTicket}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "Ticket",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Получение списка возрастных групп.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка получения 3-х типов возраста\", function () {\r",
+							"     const responseJson = pm.response.json();\r",
+							"     const actualArray = responseJson.data.map(item => item.name);\r",
+							"     pm.expect(responseJson.data).to.have.length('3');\r",
+							"     pm.expect(actualArray).include.members(['Взрослые','Дети','Смешанные'])\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/AgeGroup?filter={\"where\":{\"field\":\"Id\",\"filterType\":6,\"value\":0,\"operatorType\":0,\"operands\":null},\"take\":0,\"skip\":0,\"orderBy\":[{\"order\":0,\"field\":\"Code\"}]}",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"AgeGroup"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "{\"where\":{\"field\":\"Id\",\"filterType\":6,\"value\":0,\"operatorType\":0,\"operands\":null},\"take\":0,\"skip\":0,\"orderBy\":[{\"order\":0,\"field\":\"Code\"}]}",
+							"description": "Фильтр"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение справочника причин отмены вызова.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка справочника причин отмены вызова\", function () {\r",
+							"     const responseJson = pm.response.json();\r",
+							"     pm.expect(responseJson.data).to.have.length('9');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/CallCancelReason?filter={%22where%22:{%22field%22:%22Id%22,%22filterType%22:4,%22value%22:0,%22operatorType%22:0,%22operands%22:null},%22take%22:0,%22skip%22:0,%22orderBy%22:[{%22order%22:0,%22field%22:%22Code%22}]}",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"CallCancelReason"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "{%22where%22:{%22field%22:%22Id%22,%22filterType%22:4,%22value%22:0,%22operatorType%22:0,%22operands%22:null},%22take%22:0,%22skip%22:0,%22orderBy%22:[{%22order%22:0,%22field%22:%22Code%22}]}",
+							"description": "Фильтр"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение списка статусов по фильтру.",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/CallDoctorStatus?filter=%7B%22where%22%3A%7B%22field%22%3A%22Code%22%2C%22filterType%22%3A1%2C%22value%22%3A%220%22%2C%22operands%22%3Anull%2C%22operatorType%22%3A0%7D%2C%22orderBy%22%3A%5B%7B%22field%22%3A%22Code%22%2C%22order%22%3A0%7D%5D%2C%22take%22%3A1%2C%22skip%22%3A0%7D",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"CallDoctorStatus"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "%7B%22where%22%3A%7B%22field%22%3A%22Code%22%2C%22filterType%22%3A1%2C%22value%22%3A%220%22%2C%22operands%22%3Anull%2C%22operatorType%22%3A0%7D%2C%22orderBy%22%3A%5B%7B%22field%22%3A%22Code%22%2C%22order%22%3A0%7D%5D%2C%22take%22%3A1%2C%22skip%22%3A0%7D"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение списка типов вызывающего.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка получения справочника типов вызывающего 'Пациент','Представитель','Сотрудник ЛПУ', 'СМП', 'СоцЗащита'\", function () {\r",
+							"     const responseJson = pm.response.json();\r",
+							"     const actualArray = responseJson.data.map(item => item.name);\r",
+							"     pm.expect(responseJson.data).to.have.length('5');\r",
+							"     pm.expect(actualArray).include.members(['Пациент','Представитель','Сотрудник ЛПУ', 'СМП', 'СоцЗащита'])\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/CallPersonType?filter={\"where\":{\"field\":\"Id\",\"filterType\":4,\"value\":0,\"operatorType\":0,\"operands\":null},\"take\":0,\"skip\":0,\"orderBy\":[{\"order\":0,\"field\":\"Code\"}]}",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"CallPersonType"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "{\"where\":{\"field\":\"Id\",\"filterType\":4,\"value\":0,\"operatorType\":0,\"operands\":null},\"take\":0,\"skip\":0,\"orderBy\":[{\"order\":0,\"field\":\"Code\"}]}",
+							"description": "Фильтр"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Добавление адреса участку.",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/HouseUchastok?klaCode=50000059000009200&klaId=1000010696&uchastokId={{UchastokID}}",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"HouseUchastok"
+					],
+					"query": [
+						{
+							"key": "klaCode",
+							"value": "50000059000009200",
+							"description": "Код адреса по КЛАДР."
+						},
+						{
+							"key": "klaId",
+							"value": "1000010696",
+							"description": "Идентификатор адреса по КЛАДР."
+						},
+						{
+							"key": "uchastokId",
+							"value": "{{UchastokID}}",
+							"description": "Идентификатор участка."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение объекта по фильтру",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/Mkab?filter={\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Family\",\"filterType\":9,\"value\":\"ntcn\",\"operands\":null,\"operatorType\":0},{\"field\":\"IsClosed\",\"filterType\":1,\"value\":0,\"operands\":null,\"operatorType\":0}]},\"orderBy\":[{\"field\":\"Family\",\"order\":0},{\"field\":\"Name\",\"order\":0},{\"field\":\"Patronymic\",\"order\":0}],\"take\":10,\"skip\":0}",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"Mkab"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "{\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":1,\"operands\":[{\"field\":\"Family\",\"filterType\":9,\"value\":\"ntcn\",\"operands\":null,\"operatorType\":0},{\"field\":\"IsClosed\",\"filterType\":1,\"value\":0,\"operands\":null,\"operatorType\":0}]},\"orderBy\":[{\"field\":\"Family\",\"order\":0},{\"field\":\"Name\",\"order\":0},{\"field\":\"Patronymic\",\"order\":0}],\"take\":10,\"skip\":0}",
+							"description": "Фильтр запроса."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение списка источников по фильтру.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка получения источника вызова 'СМП','Регистратура' \", function () {\r",
+							"     const responseJson = pm.response.json();\r",
+							"     const actualArray = responseJson.data.map(item => item.name);\r",
+							"     pm.expect(responseJson.data).to.have.length('2');\r",
+							"     pm.expect(actualArray).include.members(['СМП','Регистратура'])\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/Source?filter={\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":2,\"operands\":[{\"field\":\"Code\",\"filterType\":1,\"value\":\"Smp\",\"operatorType\":0,\"operands\":null},{\"field\":\"Code\",\"filterType\":1,\"value\":\"Registry\",\"operatorType\":0,\"operands\":null}]},\"take\":2,\"skip\":0,\"orderBy\":[]}",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"Source"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "{\"where\":{\"field\":null,\"filterType\":0,\"value\":null,\"operatorType\":2,\"operands\":[{\"field\":\"Code\",\"filterType\":1,\"value\":\"Smp\",\"operatorType\":0,\"operands\":null},{\"field\":\"Code\",\"filterType\":1,\"value\":\"Registry\",\"operatorType\":0,\"operands\":null}]},\"take\":2,\"skip\":0,\"orderBy\":[]}",
+							"description": "Фильтр для отбора данных."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение списка типов вызывающего.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка получения 3-х типов возраста\", function () {\r",
+							"     const responseJson = pm.response.json();\r",
+							"     const actualArray = responseJson.data.map(item => item.name);\r",
+							"     pm.expect(responseJson.data).to.have.length('8');\r",
+							"     pm.expect(actualArray).include.members(['Первичный','Повторный','Активное посещение','Неотложный','ПЦР-тест','Доставка ЛС','ЭЛН','Патронаж'])\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "ticket",
+						"value": "{{modemoTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}callhome/api/TypeCallDoctor?filter={\"where\":{\"field\":\"Id\",\"filterType\":4,\"value\":0,\"operatorType\":0,\"operands\":null},\"take\":0,\"skip\":0,\"orderBy\":[{\"order\":0,\"field\":\"Code\"}]}",
+					"host": [
+						"{{baseUrl}}callhome"
+					],
+					"path": [
+						"api",
+						"TypeCallDoctor"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "{\"where\":{\"field\":\"Id\",\"filterType\":4,\"value\":0,\"operatorType\":0,\"operands\":null},\"take\":0,\"skip\":0,\"orderBy\":[{\"order\":0,\"field\":\"Code\"}]}",
+							"description": "Фильтр"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "modemoTicket",
+			"value": ""
+		},
+		{
+			"key": "callDoctorMkabId",
+			"value": ""
+		},
+		{
+			"key": "dateSheduler",
+			"value": ""
+		},
+		{
+			"key": "dateNext",
+			"value": ""
+		},
+		{
+			"key": "callId",
+			"value": ""
+		},
+		{
+			"key": "callDoctorHistoryGuid",
+			"value": ""
+		},
+		{
+			"key": "mkabId",
+			"value": ""
+		},
+		{
+			"key": "lpuid",
+			"value": ""
+		},
+		{
+			"key": "LPUDoctorID",
+			"value": ""
+		},
+		{
+			"key": "DocPRVDID",
+			"value": ""
+		},
+		{
+			"key": "mcodMainLpu",
+			"value": ""
+		},
+		{
+			"key": "mcodLpu",
+			"value": ""
+		},
+		{
+			"key": "UchastokID",
+			"value": ""
+		}
+	]
+}
